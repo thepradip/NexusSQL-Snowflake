@@ -27,7 +27,7 @@ were recomputed from the files, not copied from prior reports.)
 
 | File | Rows | Config | execution_match | VES | CITABLE | Notes |
 |---|---|---|---|---|---|---|
-| `results_bird_gpt55_stratified300.scored.csv` | 300 | stratified BIRD dev sample, manifest-pinned | 182/300 = 60.7% | 0.643 | yes (until full-dev lands) | current best BIRD number |
+| `results_bird_gpt55_stratified300.scored.csv` | 300 | stratified BIRD dev sample, manifest-pinned | 182/300 = 60.7% | 0.643 | superseded | replaced by the full-dev run (62.3%), with which it is consistent |
 | `results_bird_gpt55_stratified300.partial.scored.csv` | 251 | mid-run snapshot | 61.4% | 0.665 | **NO** | superseded by the 300-row final |
 | `results_bird_gpt55_balanced55.scored.csv` | 55 | smoke | 76.4% | 0.767 | **NO** | per BIRD_EVAL_PROTOCOL.md, small smoke runs are never reported as the BIRD score |
 | `results_bird_gpt55_balanced22.scored.csv` | 22 | smoke | 68.2% | 0.664 | **NO** | smoke |
@@ -49,7 +49,7 @@ were recomputed from the files, not copied from prior reports.)
 | File | Rows | Config | Headline | CITABLE | Notes |
 |---|---|---|---|---|---|
 | `results_ablation_100.csv` | 1,120 | 4 retrieval modes × 280q, merged_100 v2 golds, fast pipeline, caches off, gpt-5.5 | strict exec-match: full 51.8%, rrf 51.8%, dense_only 51.4%, bm25_only 51.1%; median latency ≈ 5.5–6.0s | **yes** | REPLACES results_100.csv. 0 provenance violations (`retrieval_mode_actual` == requested on all rows), 5 error rows (bad generated SQL, counted as miss). Metric is strict binary execution match — NOT comparable to the old partial-credit execution_accuracy. schema_f1 (0.25–0.33) is over the untrimmed top-8 retrieval, not the adaptive-threshold set — do not compare to the old ~0.89 figure. Code state: `results_ablation_100.gitrev` |
-| `results_bird_gpt55_full_dev.csv` | 1,534 | BIRD full dev, manifest-pinned, gpt-5.5 | scoring in progress | pending scored.csv | replaces every earlier BIRD number |
+| `results_bird_gpt55_full_dev.scored.csv` | 1,534 | BIRD full dev, manifest-pinned, gpt-5.5, scored --repeats 3 | **exec match 955/1534 = 62.3%** (Wilson 95% CI [59.8%, 64.6%]), VES 0.700; simple 68.1% / moderate 53.2% / challenging 53.8% | **yes — THE BIRD number** | replaces 42.4%/238q and the stratified-300 60.7%. 9 scorer-flagged rows (5 no_sql, 3 gold-side issues, 1 timeout) counted as misses. Code state: `results_bird_gpt55_full_dev.gitrev` |
 | `results_ablation_500.csv` | 1,440 | 4 retrieval modes × 360q, merged_500 (502 tables), v2 golds | strict exec-match: bm25 55.6%, rrf 55.0%, full 54.7%, dense 53.6%; McNemar full-vs-each p=0.59–1.0 (no significant differences) | **yes** | 0 provenance violations, 10 error rows. KEY FINDING: retrieval mode does not discriminate even at 502 tables — the paper's scale-thesis framing must present retrieval as a COST optimization (token reduction), not an accuracy win. Code state: `results_ablation_500.gitrev` |
 
 ## Canonical query totals
