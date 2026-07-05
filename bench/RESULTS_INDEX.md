@@ -42,7 +42,7 @@ were recomputed from the files, not copied from prior reports.)
 | `results_nexus_100.csv` | NexusSQL fast | 95/233 = 40.8% | after gold repair | re-score on merged_100_v2 |
 | `results_nexus_agentic_100.csv` | NexusSQL ReAct | 96/233 = 41.2% | after gold repair | re-score on merged_100_v2 |
 | `results_nexus_fewshot_100.csv` | NexusSQL few-shot | 98/233 = 42.1% | after gold repair | re-score on merged_100_v2 |
-| `results_vanna_100.csv` | Vanna 2.0 | 118/233 = 50.6% | after gold repair | honest secondary baseline; paper reports this with the scale-crossover experiment (Phase 3.4) |
+| `results_vanna_100.csv` | Vanna 2.0 | 118/233 = 50.6% | **NO — out of scope** | author decision 2026-07-05: the paper reports NexusSQL's own results only, no third-party head-to-head. Partial v2 re-runs (results_vanna_{100,500}_v2.csv, ~50 rows each) stopped and not citable. If the repo goes public alongside the paper, consider moving all results_vanna_* files to bench/archive/ so an unreported comparison isn't sitting next to reported numbers. |
 
 ## Post-fix campaign runs (2026-07-05, paper-acceptance branch)
 
