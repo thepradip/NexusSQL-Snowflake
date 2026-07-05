@@ -49,7 +49,8 @@ were recomputed from the files, not copied from prior reports.)
 | File | Rows | Config | Headline | CITABLE | Notes |
 |---|---|---|---|---|---|
 | `results_ablation_100.csv` | 1,120 | 4 retrieval modes × 280q, merged_100 v2 golds, fast pipeline, caches off, gpt-5.5 | strict exec-match: full 51.8%, rrf 51.8%, dense_only 51.4%, bm25_only 51.1%; median latency ≈ 5.5–6.0s | **yes** | REPLACES results_100.csv. 0 provenance violations (`retrieval_mode_actual` == requested on all rows), 5 error rows (bad generated SQL, counted as miss). Metric is strict binary execution match — NOT comparable to the old partial-credit execution_accuracy. schema_f1 (0.25–0.33) is over the untrimmed top-8 retrieval, not the adaptive-threshold set — do not compare to the old ~0.89 figure. Code state: `results_ablation_100.gitrev` |
-| `results_bird_gpt55_full_dev.csv` | RUNNING | BIRD full dev 1,534q, manifest-pinned | — | pending | replaces every earlier BIRD number when scored |
+| `results_bird_gpt55_full_dev.csv` | 1,534 | BIRD full dev, manifest-pinned, gpt-5.5 | scoring in progress | pending scored.csv | replaces every earlier BIRD number |
+| `results_ablation_500.csv` | 1,440 | 4 retrieval modes × 360q, merged_500 (502 tables), v2 golds | strict exec-match: bm25 55.6%, rrf 55.0%, full 54.7%, dense 53.6%; McNemar full-vs-each p=0.59–1.0 (no significant differences) | **yes** | 0 provenance violations, 10 error rows. KEY FINDING: retrieval mode does not discriminate even at 502 tables — the paper's scale-thesis framing must present retrieval as a COST optimization (token reduction), not an accuracy win. Code state: `results_ablation_500.gitrev` |
 
 ## Canonical query totals
 
