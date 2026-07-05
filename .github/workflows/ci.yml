@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, paper-acceptance]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test dependencies
+        run: pip install pytest sqlglot networkx openai httpx pydantic-settings python-dotenv
+      - name: Run test suite (207 tests)
+        run: python -m pytest -q
+      - name: SQLAS scoring regression gate
+        run: python bench/regression/run_regression.py
+      - name: Gold-set integrity (all v2 golds must execute)
+        run: |
+          python - <<'EOF'
+          import json, sqlite3, sys, pathlib
+          bad = 0
+          for n in (50, 100, 200):
+              db = pathlib.Path(f"large_schema_eval_v2/merged_{n}.sqlite")
+              qf = pathlib.Path(f"large_schema_eval_v2/questions_{n}_v2.json")
+              if not (db.exists() and qf.exists()):
+                  print(f"skip merged_{n}: files not in repo")
+                  continue
+              conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+              for q in json.load(open(qf)):
+                  try:
+                      conn.execute(q["gold_sql"]).fetchall()
+                  except Exception as e:
+                      print(f"merged_{n}: FAIL {q['question'][:60]} :: {e}")
+                      bad += 1
+          sys.exit(1 if bad else 0)
+          EOF

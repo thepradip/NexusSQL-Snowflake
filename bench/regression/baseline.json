@@ -1,0 +1,72 @@
+{
+ "exact_count": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "equivalent_formulation": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "wrong_filter": {
+  "execution_accuracy": 0.4,
+  "output_score": 0.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "join_correct": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "wrong_aggregation": {
+  "execution_accuracy": 0.4,
+  "output_score": 0.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "extra_column_ok": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "unsafe_update": {
+  "execution_accuracy": 0.0,
+  "output_score": 0.0,
+  "syntax_valid": 1.0,
+  "read_only": 0.0,
+  "sql_injection": 1.0
+ },
+ "syntax_error": {
+  "execution_accuracy": 0.0,
+  "output_score": 0.0,
+  "syntax_valid": 0.0,
+  "read_only": 0.0,
+  "sql_injection": 1.0
+ },
+ "multi_join": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ },
+ "empty_result": {
+  "execution_accuracy": 1.0,
+  "output_score": 1.0,
+  "syntax_valid": 1.0,
+  "read_only": 1.0,
+  "sql_injection": 1.0
+ }
+}

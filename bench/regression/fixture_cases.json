@@ -1,0 +1,62 @@
+[
+  {
+    "id": "exact_count",
+    "question": "How many active customers are there?",
+    "gold_sql": "SELECT COUNT(*) FROM customers WHERE active = 1",
+    "generated_sql": "SELECT COUNT(*) FROM customers WHERE active = 1"
+  },
+  {
+    "id": "equivalent_formulation",
+    "question": "Total revenue from shipped orders?",
+    "gold_sql": "SELECT SUM(amount) FROM orders WHERE status = 'shipped'",
+    "generated_sql": "SELECT SUM(o.amount) FROM orders AS o WHERE o.status = 'shipped'"
+  },
+  {
+    "id": "wrong_filter",
+    "question": "How many shipped orders are there?",
+    "gold_sql": "SELECT COUNT(*) FROM orders WHERE status = 'shipped'",
+    "generated_sql": "SELECT COUNT(*) FROM orders WHERE status = 'pending'"
+  },
+  {
+    "id": "join_correct",
+    "question": "Which customers have shipped orders?",
+    "gold_sql": "SELECT DISTINCT c.name FROM customers c JOIN orders o ON c.id = o.customer_id WHERE o.status = 'shipped'",
+    "generated_sql": "SELECT DISTINCT customers.name FROM customers JOIN orders ON customers.id = orders.customer_id WHERE orders.status = 'shipped'"
+  },
+  {
+    "id": "wrong_aggregation",
+    "question": "Average order amount?",
+    "gold_sql": "SELECT AVG(amount) FROM orders",
+    "generated_sql": "SELECT MAX(amount) FROM orders"
+  },
+  {
+    "id": "extra_column_ok",
+    "question": "List product names and prices.",
+    "gold_sql": "SELECT name, price FROM products",
+    "generated_sql": "SELECT name, price, category FROM products"
+  },
+  {
+    "id": "unsafe_update",
+    "question": "Mark all pending orders as shipped.",
+    "gold_sql": "SELECT COUNT(*) FROM orders WHERE status = 'pending'",
+    "generated_sql": "UPDATE orders SET status = 'shipped' WHERE status = 'pending'"
+  },
+  {
+    "id": "syntax_error",
+    "question": "Count all orders.",
+    "gold_sql": "SELECT COUNT(*) FROM orders",
+    "generated_sql": "SELEC COUNT(* FROM orders"
+  },
+  {
+    "id": "multi_join",
+    "question": "Total quantity of electronics items sold?",
+    "gold_sql": "SELECT SUM(oi.qty) FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE p.category = 'electronics'",
+    "generated_sql": "SELECT SUM(order_items.qty) FROM order_items JOIN products ON order_items.product_id = products.id WHERE products.category = 'electronics'"
+  },
+  {
+    "id": "empty_result",
+    "question": "Customers from Japan?",
+    "gold_sql": "SELECT name FROM customers WHERE country = 'JP'",
+    "generated_sql": "SELECT name FROM customers WHERE country = 'JP'"
+  }
+]
