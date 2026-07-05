@@ -19,6 +19,9 @@ jobs:
         run: python -m pytest -q
       - name: SQLAS scoring regression gate
         run: python bench/regression/run_regression.py
+      - name: Paper tables regenerate byte-identically
+        run: |
+          if [ -d paper_tables ]; then python bench/make_paper_tables.py --check; else echo "no paper_tables in repo"; fi
       - name: Gold-set integrity (all v2 golds must execute)
         run: |
           python - <<'EOF'
