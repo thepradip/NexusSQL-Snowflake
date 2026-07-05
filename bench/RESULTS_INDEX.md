@@ -44,6 +44,13 @@ were recomputed from the files, not copied from prior reports.)
 | `results_nexus_fewshot_100.csv` | NexusSQL few-shot | 98/233 = 42.1% | after gold repair | re-score on merged_100_v2 |
 | `results_vanna_100.csv` | Vanna 2.0 | 118/233 = 50.6% | after gold repair | honest secondary baseline; paper reports this with the scale-crossover experiment (Phase 3.4) |
 
+## Post-fix campaign runs (2026-07-05, paper-acceptance branch)
+
+| File | Rows | Config | Headline | CITABLE | Notes |
+|---|---|---|---|---|---|
+| `results_ablation_100.csv` | 1,120 | 4 retrieval modes × 280q, merged_100 v2 golds, fast pipeline, caches off, gpt-5.5 | strict exec-match: full 51.8%, rrf 51.8%, dense_only 51.4%, bm25_only 51.1%; median latency ≈ 5.5–6.0s | **yes** | REPLACES results_100.csv. 0 provenance violations (`retrieval_mode_actual` == requested on all rows), 5 error rows (bad generated SQL, counted as miss). Metric is strict binary execution match — NOT comparable to the old partial-credit execution_accuracy. schema_f1 (0.25–0.33) is over the untrimmed top-8 retrieval, not the adaptive-threshold set — do not compare to the old ~0.89 figure. Code state: `results_ablation_100.gitrev` |
+| `results_bird_gpt55_full_dev.csv` | RUNNING | BIRD full dev 1,534q, manifest-pinned | — | pending | replaces every earlier BIRD number when scored |
+
 ## Canonical query totals
 
 Do **not** hand-sum totals into the paper ("3,686 vs 3,448" bug). The total
