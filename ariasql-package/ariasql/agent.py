@@ -406,7 +406,6 @@ async def run_query(
     """
     # Gap 1 fix: declare _query_cache global so the cache-disable assignment
     # on schema-change error writes the module-level variable, not a local one.
-    global _query_cache
 
     # ── Agentic (ReAct) path ──────────────────────────────────────────────────
     use_react = (
@@ -452,9 +451,10 @@ async def run_query(
             except PermissionError:
                 raise
             except Exception:
-                # SQL may have broken due to schema change — fall through to full pipeline
-                _query_cache = None  # temporary disable to avoid repeated failures
-                pass
+                # Cached SQL broke, most likely a schema change: every stored
+                # entry is now suspect. Flush the cache but keep it alive so
+                # it repopulates with SQL generated against the new schema.
+                _query_cache.clear_all()
             else:
                 # Exact hits reuse the cached response; semantic hits re-narrate
                 if cache_hit.cache_type == "exact" and cache_hit.response:

@@ -75,16 +75,50 @@ class LLMProvider(ABC):
 
 class AzureOpenAIProvider(LLMProvider):
     def __init__(self, endpoint: str, api_key: str, deployment: str, api_version: str):
-        from openai import AzureOpenAI
-        self._client = AzureOpenAI(
-            azure_endpoint=endpoint,
-            api_key=api_key,
-            api_version=api_version,
-        )
+        endpoint = endpoint.rstrip("/")
+        # Azure "v1" endpoints (…/openai/v1) speak the plain OpenAI API and
+        # reject the AzureOpenAI client's api-version routing.
+        if endpoint.endswith("/openai/v1"):
+            from openai import OpenAI
+            self._client = OpenAI(api_key=api_key, base_url=f"{endpoint}/")
+        else:
+            from openai import AzureOpenAI
+            self._client = AzureOpenAI(
+                azure_endpoint=endpoint,
+                api_key=api_key,
+                api_version=api_version,
+            )
         self._deployment = deployment
 
+    @staticmethod
+    def _rejects_max_completion_tokens(exc) -> bool:
+        """True when a 400 identifies max_completion_tokens as unsupported.
+
+        Older Azure deployments accept only the legacy max_tokens parameter.
+        Prefers the structured error body (code/param) over the message text.
+        """
+        body = getattr(exc, "body", None)
+        err = body.get("error", body) if isinstance(body, dict) else {}
+        if isinstance(err, dict):
+            if "max_completion_tokens" in str(err.get("param", "")):
+                return True
+            if err.get("code") in ("unsupported_parameter", "unsupported_value") \
+                    and "max_completion_tokens" in str(err.get("message", "")):
+                return True
+        return "max_completion_tokens" in str(exc) and "nsupported" in str(exc)
+
+    def _chat_create(self, **kwargs):
+        from openai import BadRequestError
+        try:
+            return self._client.chat.completions.create(**kwargs)
+        except BadRequestError as exc:
+            if "max_completion_tokens" not in kwargs or not self._rejects_max_completion_tokens(exc):
+                raise
+            kwargs["max_tokens"] = kwargs.pop("max_completion_tokens")
+            return self._client.chat.completions.create(**kwargs)
+
     def complete(self, messages: list[dict], max_tokens: int = 2000) -> str:
-        resp = self._client.chat.completions.create(
+        resp = self._chat_create(
             model=self._deployment,
             messages=messages,
             max_completion_tokens=max_tokens,
@@ -93,7 +127,7 @@ class AzureOpenAIProvider(LLMProvider):
 
     def complete_with_tools(self, messages, tools, max_tokens=2000):
         import json
-        resp = self._client.chat.completions.create(
+        resp = self._chat_create(
             model=self._deployment,
             messages=messages,
             tools=tools,
@@ -193,7 +227,12 @@ class AnthropicProvider(LLMProvider):
         if system:
             kwargs["system"] = system
         resp = self._client.messages.create(**kwargs)
-        return resp.content[0].text
+        # The first content block is not guaranteed to be text (e.g. thinking
+        # or tool_use blocks) — take the first text block wherever it appears.
+        return next(
+            (block.text for block in resp.content if getattr(block, "type", "") == "text"),
+            "",
+        )
 
     def complete_with_tools(self, messages, tools, max_tokens=2000):
         """Converts OpenAI-format messages/tools to Anthropic format internally."""

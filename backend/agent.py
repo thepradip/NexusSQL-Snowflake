@@ -400,7 +400,6 @@ async def run_query(
 
     Both paths return the same dict shape.
     """
-    global _query_cache  # assignment on cache-disable must write module-level var, not a local
     # ── Agentic (ReAct) path ──────────────────────────────────────────────────
     use_react = (
         (force_agentic or (settings.agentic_mode and _is_complex_query(user_query)))
@@ -430,9 +429,10 @@ async def run_query(
             try:
                 result = await exec_fn(cache_hit.sql)
             except Exception:
-                # SQL may have broken due to schema change — fall through to full pipeline
-                _query_cache = None  # temporary disable to avoid repeated failures
-                pass
+                # Cached SQL broke, most likely a schema change: every stored
+                # entry is now suspect. Flush the cache but keep it alive so
+                # it repopulates with SQL generated against the new schema.
+                _query_cache.clear_all()
             else:
                 # Exact hits reuse the cached response; semantic hits re-narrate
                 if cache_hit.cache_type == "exact" and cache_hit.response:

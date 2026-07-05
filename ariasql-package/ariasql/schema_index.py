@@ -47,6 +47,9 @@ class SchemaIndex:
         self._idf: dict[str, float] = {}
         self._schema: dict = {}
         self._col_stats: dict = {}
+        # Provenance: the retrieval mode that actually executed on the last
+        # call (e.g. "full[bm25_fallback]" when embeddings were unavailable).
+        self.last_retrieval_mode_actual: Optional[str] = None
 
     # ── Build ──────────────────────────────────────────────────────────────────
 
@@ -211,13 +214,42 @@ class SchemaIndex:
             pass
 
     # ── Retrieval ─────────────────────────────────────────────────────────────
+    #
+    # Ablation-mode contract (paper integrity):
+    #   bm25_only  — sparse only, no FK expand.
+    #   dense_only — dense embeddings only, no FK expand. HARD ERROR if
+    #                embeddings are unavailable — it must never silently
+    #                degrade to BM25 and masquerade as a dense ablation.
+    #   rrf        — BM25 + dense fused via RRF, no FK expand. HARD ERROR if
+    #                embeddings are unavailable (RRF without dense IS BM25).
+    #   full       — production default: BM25 + dense + RRF + FK expansion,
+    #                gracefully degrades to BM25(+FK) without embeddings.
+    #
+    # `last_retrieval_mode_actual` records what actually executed so eval
+    # runners can write provenance into every result row.
+
+    def _dense_scores(self, query: str) -> list[tuple[str, float]]:
+        """Dense-embedding ranking. Raises RuntimeError if embeddings unavailable."""
+        model = self._settings.azure_openai_embedding_deployment
+        if not (model and self._embeddings):
+            raise RuntimeError(
+                "dense retrieval requested but embeddings are unavailable "
+                "(no embedding deployment configured, or embedding build failed). "
+                "Refusing to fall back to BM25 in an ablation mode."
+            )
+        resp = self._client.embeddings.create(model=model, input=query[:2000])
+        qvec = resp.data[0].embedding
+        scores = [(t, self._cosine_dense(qvec, vec)) for t, vec in self._embeddings.items()]
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores
 
     def retrieve_relevant_tables(self, query: str, top_k: Optional[int] = None) -> list[str]:
         """
-        Sync BM25 retrieval + FK neighbor expansion.
-        Used when no embedding deployment is configured or in sync contexts.
+        Retrieve the schema-relevant tables for a query.
 
-        Respects retrieval_mode and disable_fk_expansion ablation flags.
+        Respects retrieval_mode and disable_fk_expansion ablation flags; see
+        the mode contract above. The embeddings client is synchronous, so all
+        modes (including dense_only and rrf) work in sync context.
         """
         k = top_k or self._settings.max_context_tables
         mode = self._settings.retrieval_mode
@@ -226,104 +258,53 @@ class SchemaIndex:
             logger.info(f"Retrieval mode: {mode}")
 
         query_tokens = self._tokenize(query)
-        scores = [(t, self._bm25_score(query_tokens, t)) for t in self._table_docs]
-        scores.sort(key=lambda x: x[1], reverse=True)
+        bm25_scores = [(t, self._bm25_score(query_tokens, t)) for t in self._table_docs]
+        bm25_scores.sort(key=lambda x: x[1], reverse=True)
+
+        if mode == "bm25_only":
+            self.last_retrieval_mode_actual = "bm25_only"
+            return [t for t, _ in bm25_scores[:k]]
 
         if mode == "dense_only":
-            logger.warning(
-                "dense_only not available in sync context, falling back to BM25"
+            dense_scores = self._dense_scores(query)  # hard error if unavailable
+            self.last_retrieval_mode_actual = "dense_only"
+            return [t for t, _ in dense_scores[:k]]
+
+        if mode == "rrf":
+            dense_scores = self._dense_scores(query)  # hard error if unavailable
+            fused = self._reciprocal_rank_fusion(
+                [t for t, _ in bm25_scores], [t for t, _ in dense_scores]
             )
-            # BM25 fallback, no FK expand
-            return [t for t, _ in scores[:k]]
+            self.last_retrieval_mode_actual = "rrf"
+            return fused[:k]
 
-        if mode in ("bm25_only", "rrf"):
-            # BM25 only (no dense in sync), no FK expand
-            return [t for t, _ in scores[:k]]
+        # ── mode == "full": production path, graceful degradation ─────────────
+        skip_fk = self._settings.disable_fk_expansion
+        try:
+            dense_scores = self._dense_scores(query)
+        except RuntimeError:
+            dense_scores = None
+        except Exception as e:
+            logger.warning(f"Dense retrieval failed ({e}); degrading to BM25.")
+            dense_scores = None
 
-        # mode == "full": existing behavior
-        if self._settings.disable_fk_expansion:
-            return [t for t, _ in scores[:k]]
-        return self._fk_expand(scores, k)
+        if dense_scores is not None:
+            fused = self._reciprocal_rank_fusion(
+                [t for t, _ in bm25_scores], [t for t, _ in dense_scores]
+            )
+            self.last_retrieval_mode_actual = "full"
+            ranked = [(t, 0.0) for t in fused]
+        else:
+            self.last_retrieval_mode_actual = "full[bm25_fallback]"
+            ranked = bm25_scores
+
+        if skip_fk:
+            return [t for t, _ in ranked[:k]]
+        return self._fk_expand(ranked, k)
 
     async def retrieve_async(self, query: str, top_k: Optional[int] = None) -> list[str]:
-        """
-        Hybrid BM25 + dense embedding retrieval via Reciprocal Rank Fusion.
-        Falls back to BM25-only when no embedding deployment is configured.
-
-        RRF consistently outperforms either ranker alone by 5-15% recall@K.
-        Respects retrieval_mode and disable_fk_expansion ablation flags.
-        """
-        k = top_k or self._settings.max_context_tables
-        mode = self._settings.retrieval_mode
-        skip_fk = self._settings.disable_fk_expansion or mode != "full"
-
-        if mode != "full":
-            logger.info(f"Retrieval mode: {mode}")
-
-        query_tokens = self._tokenize(query)
-        all_tables = list(self._table_docs.keys())
-
-        # ── bm25_only: sparse retrieval only, no dense, no RRF, no FK expand ──
-        if mode == "bm25_only":
-            bm25_scores = [(t, self._bm25_score(query_tokens, t)) for t in all_tables]
-            bm25_scores.sort(key=lambda x: x[1], reverse=True)
-            return [t for t, _ in bm25_scores[:k]]
-
-        # ── dense_only: dense embeddings only, no BM25, no RRF, no FK expand ──
-        if mode == "dense_only":
-            model = self._settings.azure_openai_embedding_deployment
-            if model and self._embeddings:
-                try:
-                    resp = self._client.embeddings.create(model=model, input=query[:2000])
-                    qvec = resp.data[0].embedding
-                    dense_scores = [
-                        (t, self._cosine_dense(qvec, vec))
-                        for t, vec in self._embeddings.items()
-                    ]
-                    dense_scores.sort(key=lambda x: x[1], reverse=True)
-                    return [t for t, _ in dense_scores[:k]]
-                except Exception:
-                    pass
-            # Fallback: warn and use BM25
-            logger.warning(
-                "dense_only requested but embeddings unavailable, falling back to BM25"
-            )
-            bm25_scores = [(t, self._bm25_score(query_tokens, t)) for t in all_tables]
-            bm25_scores.sort(key=lambda x: x[1], reverse=True)
-            return [t for t, _ in bm25_scores[:k]]
-
-        # ── rrf / full: BM25 + dense + RRF ────────────────────────────────────
-        # Sparse: BM25 ranking
-        bm25_scores = [(t, self._bm25_score(query_tokens, t)) for t in all_tables]
-        bm25_scores.sort(key=lambda x: x[1], reverse=True)
-        bm25_ranking = [t for t, _ in bm25_scores]
-
-        # Dense: Azure OpenAI embedding ranking (optional)
-        model = self._settings.azure_openai_embedding_deployment
-        if model and self._embeddings:
-            try:
-                resp = self._client.embeddings.create(model=model, input=query[:2000])
-                qvec = resp.data[0].embedding
-                dense_scores = [
-                    (t, self._cosine_dense(qvec, vec))
-                    for t, vec in self._embeddings.items()
-                ]
-                dense_scores.sort(key=lambda x: x[1], reverse=True)
-                dense_ranking = [t for t, _ in dense_scores]
-
-                # Reciprocal Rank Fusion: merge sparse + dense rankings
-                fused_ranking = self._reciprocal_rank_fusion(bm25_ranking, dense_ranking)
-                fused_scores = [(t, 0.0) for t in fused_ranking]
-                if skip_fk:
-                    return [t for t, _ in fused_scores[:k]]
-                return self._fk_expand(fused_scores, k)
-            except Exception:
-                pass
-
-        # BM25 fallback (no embeddings available)
-        if skip_fk:
-            return [t for t, _ in bm25_scores[:k]]
-        return self._fk_expand(bm25_scores, k)
+        """Async wrapper over retrieve_relevant_tables (embedding client is sync)."""
+        return self.retrieve_relevant_tables(query, top_k)
 
     def _fk_expand(self, scores: list[tuple[str, float]], top_k: int) -> list[str]:
         """Add FK neighbors to guarantee JOINs are possible."""

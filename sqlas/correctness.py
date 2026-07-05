@@ -251,8 +251,14 @@ def execution_accuracy(
     elif pred_result and gold_result:
         struct_score = min(len(pred_result), len(gold_result)) / max(len(pred_result), len(gold_result))
 
-    time_ratio = gold_time / pred_time if pred_time > 0 else 1.0
-    efficiency = min(time_ratio, 1.0)
+    # Sub-5ms executions are dominated by scheduler/cache noise, not query
+    # cost — without this floor, identical gold and generated SQL randomly
+    # score efficiency < 1.0 depending on which ran faster by microseconds.
+    if gold_time < 5.0 and pred_time < 5.0:
+        efficiency = 1.0
+    else:
+        time_ratio = gold_time / pred_time if pred_time > 0 else 1.0
+        efficiency = min(time_ratio, 1.0)
 
     final = round(0.6 * output_score + 0.2 * struct_score + 0.2 * efficiency, 4)
 

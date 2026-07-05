@@ -21,9 +21,15 @@ JOINs correctly, and avoids NULL traps before writing a single line of SQL.
 """
 
 import json
-from typing import Any
+from typing import Any, Optional
 
 from database import execute_readonly_query, get_full_schema, get_all_col_stats_cached
+
+# Structured result of the most recent successful execute_sql tool call in
+# this process. The agent loop reuses it (e.g. for visualization) instead of
+# executing the same query a second time. Per-process, last-write-wins:
+# concurrent requests sharing the process will overwrite each other.
+last_sql_result: Optional[dict] = None
 
 
 # ── OpenAI-format tool definitions ────────────────────────────────────────────
@@ -268,9 +274,12 @@ async def _describe_table(table_name: str) -> str:
 
 
 async def _execute_sql(sql: str) -> str:
+    global last_sql_result
+    last_sql_result = None
     if not sql.strip():
         return "Error: sql is required."
     result = await execute_readonly_query(sql)
+    last_sql_result = result
     lines = [
         f"Executed in {result['execution_time_ms']}ms  |  "
         f"{result['row_count']} rows"

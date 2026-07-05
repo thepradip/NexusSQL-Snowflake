@@ -29,6 +29,7 @@ import mlflow
 from mlflow.entities import SpanType
 
 from .llm_providers import LLMProvider
+from . import tools
 from .tools import TOOL_DEFINITIONS, execute_tool
 from .visualization import build_visualization
 
@@ -205,14 +206,12 @@ async def run_react_query(
                     # Execute the tool
                     tool_result_str = await execute_tool(tool_name, tool_args)
 
-                    # Track last execute_sql result for visualization
+                    # Track last execute_sql result for visualization — reuse
+                    # the result captured by the tool; never re-execute the SQL
                     if tool_name == "execute_sql" and tool_args.get("sql"):
-                        try:
-                            from database import execute_readonly_query
-                            last_result_data = await execute_readonly_query(tool_args["sql"])
+                        if tools.last_sql_result is not None:
+                            last_result_data = tools.last_sql_result
                             final_sql = tool_args["sql"]
-                        except Exception:
-                            pass
 
                     steps.append({
                         "step": step_num,
