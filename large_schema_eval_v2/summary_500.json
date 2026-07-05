@@ -1,0 +1,252 @@
+{
+  "target_table_count": 500,
+  "actual_table_count": 502,
+  "source_databases": [
+    "baseball_1",
+    "cre_Drama_Workshop_Groups",
+    "cre_Theme_park",
+    "sakila_1",
+    "hospital_1",
+    "department_store",
+    "assets_maintenance",
+    "formula_1",
+    "customer_deliveries",
+    "solvency_ii",
+    "tracking_grants_for_research",
+    "store_1",
+    "cre_Doc_Control_Systems",
+    "local_govt_and_lot",
+    "behavior_monitoring",
+    "chinook_1",
+    "college_2",
+    "e_government",
+    "customers_and_invoices",
+    "document_management",
+    "student_assessment",
+    "college_3",
+    "cre_Doc_Tracking_DB",
+    "customers_campaigns_ecommerce",
+    "local_govt_mdm",
+    "college_1",
+    "cre_Docs_and_Epenses",
+    "customers_and_addresses",
+    "customers_and_products_contacts",
+    "hr_1",
+    "insurance_and_eClaims",
+    "insurance_fnol",
+    "music_2",
+    "products_for_hire",
+    "tracking_orders",
+    "tracking_share_transactions",
+    "apartment_rentals",
+    "company_1",
+    "csu_1",
+    "driving_school",
+    "e_learning",
+    "products_gen_characteristics",
+    "soccer_1",
+    "tracking_software_problems",
+    "activity_1",
+    "aircraft",
+    "dorm_1",
+    "insurance_policies",
+    "product_catalog",
+    "restaurant_1",
+    "riding_club",
+    "sports_competition",
+    "store_product",
+    "bike_1",
+    "city_record",
+    "coffee_shop",
+    "customer_complaints",
+    "customers_card_transactions",
+    "epinions_1",
+    "farm"
+  ],
+  "total_questions": 360,
+  "questions_per_source_db": {
+    "baseball_1": 6,
+    "cre_Drama_Workshop_Groups": 6,
+    "cre_Theme_park": 6,
+    "sakila_1": 6,
+    "hospital_1": 6,
+    "department_store": 6,
+    "assets_maintenance": 6,
+    "formula_1": 6,
+    "customer_deliveries": 6,
+    "solvency_ii": 6,
+    "tracking_grants_for_research": 6,
+    "store_1": 6,
+    "cre_Doc_Control_Systems": 6,
+    "local_govt_and_lot": 6,
+    "behavior_monitoring": 6,
+    "chinook_1": 6,
+    "college_2": 6,
+    "e_government": 6,
+    "customers_and_invoices": 6,
+    "document_management": 6,
+    "student_assessment": 6,
+    "college_3": 6,
+    "cre_Doc_Tracking_DB": 6,
+    "customers_campaigns_ecommerce": 6,
+    "local_govt_mdm": 6,
+    "college_1": 6,
+    "cre_Docs_and_Epenses": 6,
+    "customers_and_addresses": 6,
+    "customers_and_products_contacts": 6,
+    "hr_1": 6,
+    "insurance_and_eClaims": 6,
+    "insurance_fnol": 6,
+    "music_2": 6,
+    "products_for_hire": 6,
+    "tracking_orders": 6,
+    "tracking_share_transactions": 6,
+    "apartment_rentals": 6,
+    "company_1": 6,
+    "csu_1": 6,
+    "driving_school": 6,
+    "e_learning": 6,
+    "products_gen_characteristics": 6,
+    "soccer_1": 6,
+    "tracking_software_problems": 6,
+    "activity_1": 6,
+    "aircraft": 6,
+    "dorm_1": 6,
+    "insurance_policies": 6,
+    "product_catalog": 6,
+    "restaurant_1": 6,
+    "riding_club": 6,
+    "sports_competition": 6,
+    "store_product": 6,
+    "bike_1": 6,
+    "city_record": 6,
+    "coffee_shop": 6,
+    "customer_complaints": 6,
+    "customers_card_transactions": 6,
+    "epinions_1": 6,
+    "farm": 6
+  },
+  "difficulty_mix": {
+    "easy": 123,
+    "medium": 118,
+    "hard": 73,
+    "extra hard": 46
+  },
+  "per_db_question_cap": 6,
+  "seed": 42,
+  "merged_db_path": "/Users/pradip/Desktop/Learning/Claude/Infogain/large_schema_eval_v2/merged_500.sqlite",
+  "questions_path": "/Users/pradip/Desktop/Learning/Claude/Infogain/large_schema_eval_v2/questions_500_v2.json",
+  "gold_sql_rewrite": "sqlglot AST, exp.Table nodes only (born clean, no repair pass needed)",
+  "gold_verification": {
+    "executed": 360,
+    "failures": 0,
+    "empty_result_warnings": 14
+  },
+  "dropped_unexecutable_examples": 20,
+  "skipped_dbs": [
+    {
+      "db": "academic",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "battle_death",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "car_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "concert_singer",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "course_teach",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "cre_Doc_Template_Mgt",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "dog_kennels",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "employee_hire_evaluation",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "flight_2",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "geo",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "imdb",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "museum_visit",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "network_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "orchestra",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "pets_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "poker_player",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "real_estate_properties",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "restaurants",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "scholar",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "singer",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "student_transcripts_tracking",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "tvshow",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "voter_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "world_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "wta_1",
+      "reason": "no examples in train_spider.json"
+    },
+    {
+      "db": "yelp",
+      "reason": "no examples in train_spider.json"
+    }
+  ]
+}

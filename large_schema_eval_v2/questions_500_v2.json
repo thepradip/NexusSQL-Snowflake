@@ -1,0 +1,2522 @@
+[
+ {
+  "question": "What are the first name and last name of the players whose death record is empty?",
+  "gold_sql": "SELECT name_first, name_last FROM baseball_1_player WHERE death_year = ''",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the total salary paid by team Boston Red Stockings in 2010?",
+  "gold_sql": "SELECT SUM(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings' AND T1.year = 2010",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the name and id of the team that won the most times in 2008 postseason.",
+  "gold_sql": "SELECT T2.name, T1.team_id_winner FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner = T2.team_id_br WHERE T1.year = 2008 GROUP BY T1.team_id_winner ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which players won awards in both 1960 and 1961? Return their first names and last names.",
+  "gold_sql": "SELECT T1.name_first, T1.name_last FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 ON TRUE WHERE T2.year = 1960 INTERSECT SELECT T1.name_first, T1.name_last FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 ON TRUE WHERE T2.year = 1961",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many parks are there in the state of NY?",
+  "gold_sql": "SELECT COUNT(*) FROM baseball_1_park WHERE state = 'NY'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which park had most attendances in 2008?",
+  "gold_sql": "SELECT T2.park_name FROM baseball_1_home_game AS T1 JOIN baseball_1_park AS T2 ON T1.park_id = T2.park_id WHERE T1.year = 2008 ORDER BY T1.attendance DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the marketing region description of China?",
+  "gold_sql": "SELECT Marketing_Region_Descriptrion FROM cre_Drama_Workshop_Groups_Marketing_Regions WHERE Marketing_Region_Name = \"China\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Return the the names of the drama workshop groups that are located in Feliciaberg city.",
+  "gold_sql": "SELECT T2.Store_Name FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T2 ON T1.Address_ID = T2.Address_ID WHERE T1.City_Town = \"Feliciaberg\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the order dates of orders with price higher than 1000?",
+  "gold_sql": "SELECT T1.Order_Date FROM cre_Drama_Workshop_Groups_Customer_Orders AS T1 JOIN cre_Drama_Workshop_Groups_Order_Items AS T2 ON T1.Order_ID = T2.Order_ID JOIN cre_Drama_Workshop_Groups_Products AS T3 ON T2.Product_ID = T3.Product_ID WHERE T3.Product_price > 1000",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Which cities have at least one customer but no performer?",
+  "gold_sql": "SELECT T1.City_Town FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Customers AS T2 ON T1.Address_ID = T2.Address_ID EXCEPT SELECT T1.City_Town FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Performers AS T2 ON T1.Address_ID = T2.Address_ID",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the phone number of performer \"Ashley\".",
+  "gold_sql": "SELECT Customer_Phone FROM cre_Drama_Workshop_Groups_Performers WHERE Customer_Name = \"Ashley\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Which marketing region has the most drama workshop groups? Give me the region code.",
+  "gold_sql": "SELECT Marketing_Region_Code FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups GROUP BY Marketing_Region_Code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show the details and star ratings of the 3 least expensive hotels.",
+  "gold_sql": "SELECT other_hotel_details, star_rating_code FROM cre_Theme_park_Hotels ORDER BY price_range ASC LIMIT 3",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What is the name of the tourist attraction that is associated with the photo \"game1\"?",
+  "gold_sql": "SELECT T2.Name FROM cre_Theme_park_Photos AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Tourist_Attraction_ID = T2.Tourist_Attraction_ID WHERE T1.Name = \"game1\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions does the visitor with detail 'Vincent' visit?",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID = T2.Tourist_Attraction_ID JOIN cre_Theme_park_Visitors AS T3 ON T2.Tourist_ID = T3.Tourist_ID WHERE T3.Tourist_Details = \"Vincent\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the tourist attractions that have parking or shopping as their feature details. What are the names of the attractions?",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Tourist_Attraction_Features AS T2 ON T1.tourist_attraction_id = T2.tourist_attraction_id JOIN cre_Theme_park_Features AS T3 ON T2.Feature_ID = T3.Feature_ID WHERE T3.feature_Details = 'park' UNION SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Tourist_Attraction_Features AS T2 ON T1.tourist_attraction_id = T2.tourist_attraction_id JOIN cre_Theme_park_Features AS T3 ON T2.Feature_ID = T3.Feature_ID WHERE T3.feature_Details = 'shopping'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the price ranges of five star hotels?",
+  "gold_sql": "SELECT price_range FROM cre_Theme_park_Hotels WHERE star_rating_code = \"5\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the average prices of hotels grouped by their pet policy.",
+  "gold_sql": "SELECT pets_allowed_yn, AVG(price_range) FROM cre_Theme_park_Hotels GROUP BY pets_allowed_yn",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Count the number of customers who are active.",
+  "gold_sql": "SELECT COUNT(*) FROM sakila_1_customer WHERE active = '1'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "Count the number of cities in Australia.",
+  "gold_sql": "SELECT COUNT(*) FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id = T2.country_id WHERE T2.country = 'Australia'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "Which film has the most number of actors or actresses? List the film name, film id and description.",
+  "gold_sql": "SELECT T2.title, T2.film_id, T2.description FROM sakila_1_film_actor AS T1 JOIN sakila_1_film AS T2 ON T1.film_id = T2.film_id GROUP BY T2.film_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "Which film is rented at a fee of 0.99 and has less than 3 in the inventory? List the film title and id.",
+  "gold_sql": "SELECT title, film_id FROM sakila_1_film WHERE rental_rate = 0.99 INTERSECT SELECT T1.title, T1.film_id FROM sakila_1_film AS T1 JOIN sakila_1_inventory AS T2 ON T1.film_id = T2.film_id GROUP BY T1.film_id HAVING COUNT(*) < 3",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "What was the date of the earliest payment?",
+  "gold_sql": "SELECT payment_date FROM sakila_1_payment ORDER BY payment_date ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "Where is store 1 located?",
+  "gold_sql": "SELECT T2.address FROM sakila_1_store AS T1 JOIN sakila_1_address AS T2 ON T1.address_id = T2.address_id WHERE store_id = 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "sakila_1"
+ },
+ {
+  "question": "What are the three most costly procedures?",
+  "gold_sql": "SELECT name FROM hospital_1_Procedures ORDER BY cost LIMIT 3",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "List the names of departments where some physicians are primarily affiliated with.",
+  "gold_sql": "SELECT DISTINCT T2.name FROM hospital_1_Affiliated_With AS T1 JOIN hospital_1_Department AS T2 ON T1.department = T2.departmentid WHERE PrimaryAffiliation = 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "Which physicians prescribe a medication of brand X? Tell me the name and position of those physicians.",
+  "gold_sql": "SELECT DISTINCT T1.name, T1.position FROM hospital_1_Physician AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.employeeid = T2.physician JOIN hospital_1_Medication AS T3 ON T3.code = T2.medication WHERE T3.Brand = \"X\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "Find the name of physicians who are affiliated with both Surgery and Psychiatry departments.",
+  "gold_sql": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.physician JOIN hospital_1_Department AS T3 ON T2.department = T3.DepartmentID WHERE T3.name = 'Surgery' INTERSECT SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.physician JOIN hospital_1_Department AS T3 ON T2.department = T3.DepartmentID WHERE T3.name = 'Psychiatry'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "What is the id of the patient who stayed in room 111 most recently?",
+  "gold_sql": "SELECT patient FROM hospital_1_Stay WHERE room = 111 ORDER BY staystart DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "Find the names of nurses who are nursing an undergoing treatment.",
+  "gold_sql": "SELECT DISTINCT T2.name FROM hospital_1_Undergoes AS T1 JOIN hospital_1_Nurse AS T2 ON T1.AssistingNurse = T2.EmployeeID",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "hospital_1"
+ },
+ {
+  "question": "Return the maximum and minimum customer codes.",
+  "gold_sql": "SELECT MAX(customer_code), MIN(customer_code) FROM department_store_Customers",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "department_store"
+ },
+ {
+  "question": "What are the highest and lowest prices of products, grouped by and alphabetically ordered by product type?",
+  "gold_sql": "SELECT MAX(product_price), MIN(product_price), product_type_code FROM department_store_Products GROUP BY product_type_code ORDER BY product_type_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "department_store"
+ },
+ {
+  "question": "List the name of staff who has been assigned multiple jobs.",
+  "gold_sql": "SELECT T1.staff_name FROM department_store_Staff AS T1 JOIN department_store_Staff_Department_Assignments AS T2 ON T1.staff_id = T2.staff_id GROUP BY T2.staff_id HAVING COUNT(*) > 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "department_store"
+ },
+ {
+  "question": "Return the ids of all products that were ordered more than three times or supplied more than 80000.",
+  "gold_sql": "SELECT product_id FROM department_store_Order_Items GROUP BY product_id HAVING COUNT(*) > 3 UNION SELECT product_id FROM department_store_Product_Suppliers GROUP BY product_id HAVING SUM(total_amount_purchased) > 80000",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "department_store"
+ },
+ {
+  "question": "Find the number of different product types.",
+  "gold_sql": "SELECT COUNT(DISTINCT product_type_code) FROM department_store_Products",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "department_store"
+ },
+ {
+  "question": "Return the name and job title of the staff with the latest date assigned.",
+  "gold_sql": "SELECT T1.staff_name, T2.job_title_code FROM department_store_Staff AS T1 JOIN department_store_Staff_Department_Assignments AS T2 ON T1.staff_id = T2.staff_id ORDER BY T2.date_assigned_to DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "department_store"
+ },
+ {
+  "question": "List the all the assets make, model, details by the disposed date ascendingly.",
+  "gold_sql": "SELECT asset_make, asset_model, asset_details FROM assets_maintenance_Assets ORDER BY asset_disposed_date ASC",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "Which gender makes up the majority of the staff?",
+  "gold_sql": "SELECT gender FROM assets_maintenance_Staff GROUP BY gender ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "Which assets did not incur any fault log? List the asset model.",
+  "gold_sql": "SELECT asset_model FROM assets_maintenance_Assets WHERE NOT asset_id IN (SELECT asset_id FROM assets_maintenance_Fault_Log)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "Which third party companies have at least 2 maintenance engineers or have at least 2 maintenance contracts? List the company id and name.",
+  "gold_sql": "SELECT T1.company_id, T1.company_name FROM assets_maintenance_Third_Party_Companies AS T1 JOIN assets_maintenance_Maintenance_Engineers AS T2 ON T1.company_id = T2.company_id GROUP BY T1.company_id HAVING COUNT(*) >= 2 UNION SELECT T3.company_id, T3.company_name FROM assets_maintenance_Third_Party_Companies AS T3 JOIN assets_maintenance_Maintenance_Contracts AS T4 ON T3.company_id = T4.maintenance_contract_company_id GROUP BY T3.company_id HAVING COUNT(*) >= 2",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "List the asset id, details, make and model for every asset.",
+  "gold_sql": "SELECT asset_id, asset_details, asset_make, asset_model FROM assets_maintenance_Assets",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "Which company started the earliest the maintenance contract? Show the company name.",
+  "gold_sql": "SELECT T1.company_name FROM assets_maintenance_Third_Party_Companies AS T1 JOIN assets_maintenance_Maintenance_Contracts AS T2 ON T1.company_id = T2.maintenance_contract_company_id ORDER BY T2.contract_start_date ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "assets_maintenance"
+ },
+ {
+  "question": "What is the first and last name of all the German drivers?",
+  "gold_sql": "SELECT forename, surname FROM formula_1_drivers WHERE nationality = \"German\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "What are the names of all races held after 2000 in Spain?",
+  "gold_sql": "SELECT DISTINCT T1.name FROM formula_1_races AS T1 JOIN formula_1_circuits AS T2 ON T1.circuitid = T2.circuitid WHERE T2.country = \"Spain\" AND T1.year > 2000",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "What is the id, first name, and last name of the driver who was in the first position for laptime at least twice?",
+  "gold_sql": "SELECT T1.driverid, T1.forename, T1.surname FROM formula_1_drivers AS T1 JOIN formula_1_lapTimes AS T2 ON T1.driverid = T2.driverid WHERE POSITION = '1' GROUP BY T1.driverid HAVING COUNT(*) >= 2",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "What are the forenames and surnames of drivers who participated in the races named Australian Grand Prix but not the races named Chinese Grand Prix?",
+  "gold_sql": "SELECT T3.forename, T3.surname FROM formula_1_races AS T1 JOIN formula_1_results AS T2 ON T1.raceid = T2.raceid JOIN formula_1_drivers AS T3 ON T2.driverid = T3.driverid WHERE T1.name = \"Australian Grand Prix\" EXCEPT SELECT T3.forename, T3.surname FROM formula_1_races AS T1 JOIN formula_1_results AS T2 ON T1.raceid = T2.raceid JOIN formula_1_drivers AS T3 ON T2.driverid = T3.driverid WHERE T1.name = \"Chinese Grand Prix\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "What are the ids and locations of all circuits in France or Belgium?",
+  "gold_sql": "SELECT circuitid, LOCATION FROM formula_1_circuits WHERE country = \"France\" OR country = \"Belgium\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "How many drivers were in the Australian Grand Prix held in 2009?",
+  "gold_sql": "SELECT COUNT(*) FROM formula_1_results AS T1 JOIN formula_1_races AS T2 ON T1.raceid = T2.raceid WHERE T2.name = \"Australian Grand Prix\" AND YEAR = 2009",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "formula_1"
+ },
+ {
+  "question": "Find the name of the most expensive product.",
+  "gold_sql": "SELECT product_name FROM customer_deliveries_Products ORDER BY product_price DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "Find the payment method that is used most frequently.",
+  "gold_sql": "SELECT payment_method FROM customer_deliveries_Customers GROUP BY payment_method ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "Find the states which do not have any employee in their record.",
+  "gold_sql": "SELECT state_province_county FROM customer_deliveries_Addresses WHERE NOT address_id IN (SELECT employee_address_id FROM customer_deliveries_Employees)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "Find the names of customers who are not living in the state of California.",
+  "gold_sql": "SELECT customer_name FROM customer_deliveries_Customers EXCEPT SELECT t1.customer_name FROM customer_deliveries_Customers AS t1 JOIN customer_deliveries_Customer_Addresses AS t2 ON t1.customer_id = t2.customer_id JOIN customer_deliveries_Addresses AS t3 ON t2.address_id = t3.address_id WHERE t3.state_province_county = 'California'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "Find the name of the first 5 customers.",
+  "gold_sql": "SELECT customer_name FROM customer_deliveries_Customers ORDER BY date_became_customer LIMIT 5",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "Find the name and price of the product that has been ordered the greatest number of times.",
+  "gold_sql": "SELECT t1.product_name, t1.product_price FROM customer_deliveries_Products AS t1 JOIN customer_deliveries_Regular_Order_Products AS t2 ON t1.product_id = t2.product_id GROUP BY t2.product_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customer_deliveries"
+ },
+ {
+  "question": "List the name of products in ascending order of price.",
+  "gold_sql": "SELECT Product_Name FROM solvency_ii_Products ORDER BY Product_Price ASC",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "Show different type codes of products and the number of products with each type code.",
+  "gold_sql": "SELECT Product_Type_Code, COUNT(*) FROM solvency_ii_Products GROUP BY Product_Type_Code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "Show the names of products and the number of events they are in, sorted by the number of events in descending order.",
+  "gold_sql": "SELECT T1.Product_Name, COUNT(*) FROM solvency_ii_Products AS T1 JOIN solvency_ii_Products_in_Events AS T2 ON T1.Product_ID = T2.Product_ID GROUP BY T1.Product_Name ORDER BY COUNT(*) DESC",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "Show the prices of the products named \"Dining\" or \"Trading Policy\".",
+  "gold_sql": "SELECT Product_Price FROM solvency_ii_Products WHERE Product_Name = \"Dining\" OR Product_Name = \"Trading Policy\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "Show the most common type code across products.",
+  "gold_sql": "SELECT Product_Type_Code FROM solvency_ii_Products GROUP BY Product_Type_Code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "List the names of products that are not in any event.",
+  "gold_sql": "SELECT Product_Name FROM solvency_ii_Products WHERE NOT Product_ID IN (SELECT Product_ID FROM solvency_ii_Products_in_Events)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "solvency_ii"
+ },
+ {
+  "question": "When did the first staff for the projects started working?",
+  "gold_sql": "SELECT date_from FROM tracking_grants_for_research_Project_Staff ORDER BY date_from ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "What are all the details of the organisations described as 'Sponsor'? Sort the result in an ascending order.",
+  "gold_sql": "SELECT organisation_details FROM tracking_grants_for_research_Organisations AS T1 JOIN tracking_grants_for_research_Organisation_Types AS T2 ON T1.organisation_type = T2.organisation_type WHERE T2.organisation_type_description = 'Sponsor' ORDER BY organisation_details",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "What is the type and id of the organization that has the most research staff?",
+  "gold_sql": "SELECT T1.organisation_type, T1.organisation_id FROM tracking_grants_for_research_Organisations AS T1 JOIN tracking_grants_for_research_Research_Staff AS T2 ON T1.organisation_id = T2.employer_organisation_id GROUP BY T1.organisation_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "What are the distinct grant amount for the grants where the documents were sent before '1986-08-26 20:49:27' and grant were ended after '1989-03-16 18:27:16'?",
+  "gold_sql": "SELECT T1.grant_amount FROM tracking_grants_for_research_Grants AS T1 JOIN tracking_grants_for_research_Documents AS T2 ON T1.grant_id = T2.grant_id WHERE T2.sent_date < '1986-08-26 20:49:27' INTERSECT SELECT grant_amount FROM tracking_grants_for_research_Grants WHERE grant_end_date > '1989-03-16 18:27:16'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "How many project members were leaders or started working before '1989-04-24 23:51:54'?",
+  "gold_sql": "SELECT COUNT(*) FROM tracking_grants_for_research_Project_Staff WHERE role_code = 'leader' OR date_from < '1989-04-24 23:51:54'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "What is the type description of the organization whose detail is listed as 'quo'?",
+  "gold_sql": "SELECT T1.organisation_type_description FROM tracking_grants_for_research_Organisation_Types AS T1 JOIN tracking_grants_for_research_Organisations AS T2 ON T1.organisation_type = T2.organisation_type WHERE T2.organisation_details = 'quo'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_grants_for_research"
+ },
+ {
+  "question": "What is the title, phone number and hire date for the employee named Nancy Edwards?",
+  "gold_sql": "SELECT title, phone, hire_date FROM store_1_employees WHERE first_name = \"Nancy\" AND last_name = \"Edwards\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "store_1"
+ },
+ {
+  "question": "What is the name of the album that has the track Ball to the Wall?",
+  "gold_sql": "SELECT T1.title FROM store_1_albums AS T1 JOIN store_1_tracks AS T2 ON T1.id = T2.genre_id WHERE T2.name = \"Balls to the Wall\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "store_1"
+ },
+ {
+  "question": "How many tracks are in each genre?",
+  "gold_sql": "SELECT COUNT(*), T1.name FROM store_1_genres AS T1 JOIN store_1_tracks AS T2 ON T1.id = T2.genre_id GROUP BY T1.name",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "store_1"
+ },
+ {
+  "question": "Find the name of tracks which are in both Movies and music playlists.",
+  "gold_sql": "SELECT T1.name FROM store_1_tracks AS T1 JOIN store_1_playlist_tracks AS T2 ON T1.id = T2.track_id JOIN store_1_playlists AS T3 ON T2.playlist_id = T3.id WHERE T3.name = 'Movies' INTERSECT SELECT T1.name FROM store_1_tracks AS T1 JOIN store_1_playlist_tracks AS T2 ON T1.id = T2.track_id JOIN store_1_playlists AS T3 ON T2.playlist_id = T3.id WHERE T3.name = 'Music'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "store_1"
+ },
+ {
+  "question": "List the number of invoices and the invoice total from California.",
+  "gold_sql": "SELECT billing_state, COUNT(*), SUM(total) FROM store_1_invoices WHERE billing_state = \"CA\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "store_1"
+ },
+ {
+  "question": "How many albums has Billy Cobam released?",
+  "gold_sql": "SELECT COUNT(*) FROM store_1_albums AS T1 JOIN store_1_artists AS T2 ON T1.artist_id = T2.id WHERE T2.name = \"Billy Cobham\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "store_1"
+ },
+ {
+  "question": "How many employees do we have?",
+  "gold_sql": "SELECT COUNT(*) FROM cre_Doc_Control_Systems_Employees",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "What is the role of the employee named Koby?",
+  "gold_sql": "SELECT T1.role_description FROM cre_Doc_Control_Systems_Roles AS T1 JOIN cre_Doc_Control_Systems_Employees AS T2 ON T1.role_code = T2.role_code WHERE T2.employee_name = \"Koby\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "Which documents have more than 1 draft copies? List document id and number of draft copies.",
+  "gold_sql": "SELECT document_id, COUNT(*) FROM cre_Doc_Control_Systems_Draft_Copies GROUP BY document_id HAVING COUNT(*) > 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "List all document ids and receipt dates of documents.",
+  "gold_sql": "SELECT document_id, receipt_date FROM cre_Doc_Control_Systems_Documents",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "For each document, list the number of employees who have showed up in the circulation history of that document. List the document ids and number of employees.",
+  "gold_sql": "SELECT document_id, COUNT(DISTINCT employee_id) FROM cre_Doc_Control_Systems_Circulation_History GROUP BY document_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "How many employees does each role have? List role description, id and number of employees.",
+  "gold_sql": "SELECT T1.role_description, T2.role_code, COUNT(*) FROM cre_Doc_Control_Systems_Roles AS T1 JOIN cre_Doc_Control_Systems_Employees AS T2 ON T1.role_code = T2.role_code GROUP BY T2.role_code",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Doc_Control_Systems"
+ },
+ {
+  "question": "When is the last day any resident moved in?",
+  "gold_sql": "SELECT MAX(date_moved_in) FROM local_govt_and_lot_Residents",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "What is the distinct service types that are provided by the organization which has detail 'Denesik and Sons Party'?",
+  "gold_sql": "SELECT DISTINCT T1.service_type_code FROM local_govt_and_lot_Services AS T1 JOIN local_govt_and_lot_Organizations AS T2 ON T1.organization_id = T2.organization_id WHERE T2.organization_details = 'Denesik and Sons Party'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "How many residents does each property have? List property id and resident count.",
+  "gold_sql": "SELECT T1.property_id, COUNT(*) FROM local_govt_and_lot_Properties AS T1 JOIN local_govt_and_lot_Residents AS T2 ON T1.property_id = T2.property_id GROUP BY T1.property_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "What are the resident details containing the substring 'Miss'?",
+  "gold_sql": "SELECT other_details FROM local_govt_and_lot_Residents WHERE other_details LIKE '%Miss%'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "List the id and type of each thing, and the details of the organization that owns it.",
+  "gold_sql": "SELECT T1.thing_id, T1.type_of_Thing_Code, T2.organization_details FROM local_govt_and_lot_Things AS T1 JOIN local_govt_and_lot_Organizations AS T2 ON T1.organization_id = T2.organization_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "Which events have the number of notes between one and three? List the event id and the property id.",
+  "gold_sql": "SELECT T1.Customer_Event_ID, T1.property_id FROM local_govt_and_lot_Customer_Events AS T1 JOIN local_govt_and_lot_Customer_Event_Notes AS T2 ON T1.Customer_Event_ID = T2.Customer_Event_ID GROUP BY T1.customer_event_id HAVING COUNT(*) BETWEEN 1 AND 3",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "local_govt_and_lot"
+ },
+ {
+  "question": "How many distinct incident type codes are there?",
+  "gold_sql": "SELECT COUNT(DISTINCT incident_type_code) FROM behavior_monitoring_Behavior_Incident",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "Find the start and end dates of behavior incidents of students with last name \"Fahey\".",
+  "gold_sql": "SELECT T1.date_incident_start, date_incident_end FROM behavior_monitoring_Behavior_Incident AS T1 JOIN behavior_monitoring_Students AS T2 ON T1.student_id = T2.student_id WHERE T2.last_name = \"Fahey\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "What are the line 1 and average monthly rentals of all student addresses?",
+  "gold_sql": "SELECT T1.line_1, AVG(T2.monthly_rental) FROM behavior_monitoring_Addresses AS T1 JOIN behavior_monitoring_Student_Addresses AS T2 ON T1.address_id = T2.address_id GROUP BY T2.address_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "Find the last names of teachers who are not involved in any detention.",
+  "gold_sql": "SELECT last_name FROM behavior_monitoring_Teachers EXCEPT SELECT T1.last_name FROM behavior_monitoring_Teachers AS T1 JOIN behavior_monitoring_Detention AS T2 ON T1.teacher_id = T2.teacher_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "How many assessment notes are there in total?",
+  "gold_sql": "SELECT COUNT(*) FROM behavior_monitoring_Assessment_Notes",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "What are the email addresses of teachers whose address has zip code \"918\"?",
+  "gold_sql": "SELECT T2.email_address FROM behavior_monitoring_Addresses AS T1 JOIN behavior_monitoring_Teachers AS T2 ON T1.address_id = T2.address_id WHERE T1.zip_postcode = \"918\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "behavior_monitoring"
+ },
+ {
+  "question": "What are the names of tracks that contain the the word you in them?",
+  "gold_sql": "SELECT Name FROM chinook_1_Track WHERE Name LIKE '%you%'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "What are the different first names for customers from Brazil who have also had an invoice?",
+  "gold_sql": "SELECT DISTINCT T1.FirstName FROM chinook_1_Customer AS T1 JOIN chinook_1_Invoice AS T2 ON T1.CustomerId = T2.CustomerId WHERE T1.country = \"Brazil\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "Show the album names and ids for albums that contain tracks with unit price bigger than 1.",
+  "gold_sql": "SELECT T1.Title, T2.AlbumID FROM chinook_1_Album AS T1 JOIN chinook_1_Track AS T2 ON T1.AlbumId = T2.AlbumId WHERE T2.UnitPrice > 1 GROUP BY T2.AlbumID",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "Find the titles of albums that contain tracks of both the Reggae and Rock genres.",
+  "gold_sql": "SELECT T1.Title FROM chinook_1_Album AS T1 JOIN chinook_1_Track AS T2 ON T1.AlbumId = T2.AlbumId JOIN chinook_1_Genre AS T3 ON T2.GenreID = T3.GenreID WHERE T3.Name = 'Reggae' INTERSECT SELECT T1.Title FROM chinook_1_Album AS T1 JOIN chinook_1_Track AS T2 ON T1.AlbumId = T2.AlbumId JOIN chinook_1_Genre AS T3 ON T2.GenreID = T3.GenreID WHERE T3.Name = 'Rock'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "How many customers have email that contains \"gmail.com\"?",
+  "gold_sql": "SELECT COUNT(*) FROM chinook_1_Customer WHERE Email LIKE \"%gmail.com%\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "Count the number of tracks that are part of the rock genre.",
+  "gold_sql": "SELECT COUNT(*) FROM chinook_1_Genre AS T1 JOIN chinook_1_Track AS T2 ON T1.GenreId = T2.GenreId WHERE T1.Name = \"Rock\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "chinook_1"
+ },
+ {
+  "question": "what is the name of the instructor who is in Statistics department and earns the lowest salary?",
+  "gold_sql": "SELECT name FROM college_2_instructor WHERE dept_name = 'Statistics' ORDER BY salary LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_2"
+ },
+ {
+  "question": "Find the total credits of courses provided by different department.",
+  "gold_sql": "SELECT SUM(credits), dept_name FROM college_2_course GROUP BY dept_name",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_2"
+ },
+ {
+  "question": "What is the name and building of the departments whose budget is more than the average budget?",
+  "gold_sql": "SELECT dept_name, building FROM college_2_department WHERE budget > (SELECT AVG(budget) FROM college_2_department)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "college_2"
+ },
+ {
+  "question": "Give the title and credits for the course that is taught in the classroom with the greatest capacity.",
+  "gold_sql": "SELECT T3.title, T3.credits FROM college_2_classroom AS T1 JOIN college_2_section AS T2 ON T1.building = T2.building AND T1.room_number = T2.room_number JOIN college_2_course AS T3 ON T2.course_id = T3.course_id WHERE T1.capacity = (SELECT MAX(capacity) FROM college_2_classroom)",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "college_2"
+ },
+ {
+  "question": "What is the sum of budgets of the Marketing and Finance departments?",
+  "gold_sql": "SELECT SUM(budget) FROM college_2_department WHERE dept_name = 'Marketing' OR dept_name = 'Finance'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_2"
+ },
+ {
+  "question": "What is the name of the deparment with the highest enrollment?",
+  "gold_sql": "SELECT dept_name FROM college_2_student GROUP BY dept_name ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_2"
+ },
+ {
+  "question": "What is the name of the organization that was formed most recently?",
+  "gold_sql": "SELECT organization_name FROM e_government_Organizations ORDER BY date_formed DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "e_government"
+ },
+ {
+  "question": "What are the last names of individuals who have been contact individuals for an organization?",
+  "gold_sql": "SELECT DISTINCT t1.individual_last_name FROM e_government_Individuals AS t1 JOIN e_government_Organization_Contact_Individuals AS t2 ON t1.individual_id = t2.individual_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "e_government"
+ },
+ {
+  "question": "Return the party email that has used party services the greatest number of times.",
+  "gold_sql": "SELECT t1.party_email FROM e_government_Parties AS t1 JOIN e_government_Party_Services AS t2 ON t1.party_id = t2.customer_id GROUP BY t1.party_email ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "e_government"
+ },
+ {
+  "question": "What is the last name of the first individual contacted from the organization with the maximum UK Vat number across all organizations?",
+  "gold_sql": "SELECT t3.individual_last_name FROM e_government_Organizations AS t1 JOIN e_government_Organization_Contact_Individuals AS t2 ON t1.organization_id = t2.organization_id JOIN e_government_Individuals AS t3 ON t2.individual_id = t3.individual_id WHERE t1.uk_vat_number = (SELECT MAX(uk_vat_number) FROM e_government_Organizations) ORDER BY t2.date_contact_to ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "e_government"
+ },
+ {
+  "question": "List every individual's first name, middle name and last name in alphabetical order by last name.",
+  "gold_sql": "SELECT individual_first_name, individual_middle_name, individual_last_name FROM e_government_Individuals ORDER BY individual_last_name",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "e_government"
+ },
+ {
+  "question": "Find the last name of the individuals that have been contact individuals of an organization.",
+  "gold_sql": "SELECT DISTINCT t1.individual_last_name FROM e_government_Individuals AS t1 JOIN e_government_Organization_Contact_Individuals AS t2 ON t1.individual_id = t2.individual_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "e_government"
+ },
+ {
+  "question": "Count the number of financial transactions that correspond to each account id.",
+  "gold_sql": "SELECT COUNT(*), account_id FROM customers_and_invoices_Financial_Transactions",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "What are the ids, names, dates of opening, and other details for accounts corresponding to the customer with the first name \"Meaghan\"?",
+  "gold_sql": "SELECT T1.account_id, T1.date_account_opened, T1.account_name, T1.other_account_details FROM customers_and_invoices_Accounts AS T1 JOIN customers_and_invoices_Customers AS T2 ON T1.customer_id = T2.customer_id WHERE T2.customer_first_name = 'Meaghan'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "Show customer ids who don't have an account.",
+  "gold_sql": "SELECT customer_id FROM customers_and_invoices_Customers EXCEPT SELECT customer_id FROM customers_and_invoices_Accounts",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "Show all product names without an order.",
+  "gold_sql": "SELECT product_name FROM customers_and_invoices_Products EXCEPT SELECT T1.product_name FROM customers_and_invoices_Products AS T1 JOIN customers_and_invoices_Order_Items AS T2 ON T1.product_id = T2.product_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "How many invoices do we have?",
+  "gold_sql": "SELECT COUNT(*) FROM customers_and_invoices_Invoices",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "Show the product ids and the number of unique orders containing each product.",
+  "gold_sql": "SELECT product_id, COUNT(DISTINCT order_id) FROM customers_and_invoices_Order_Items GROUP BY product_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_and_invoices"
+ },
+ {
+  "question": "List all the image name and URLs in the order of their names.",
+  "gold_sql": "SELECT image_name, image_url FROM document_management_Images ORDER BY image_name",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "document_management"
+ },
+ {
+  "question": "What is the total access count of documents that are of the most common document type?",
+  "gold_sql": "SELECT SUM(access_count) FROM document_management_Documents GROUP BY document_type_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "document_management"
+ },
+ {
+  "question": "What is the structure of the document with the least number of accesses?",
+  "gold_sql": "SELECT t2.document_structure_description FROM document_management_Documents AS t1 JOIN document_management_Document_Structures AS t2 ON t1.document_structure_code = t2.document_structure_code GROUP BY t1.document_structure_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "document_management"
+ },
+ {
+  "question": "Find names of the document without any images.",
+  "gold_sql": "SELECT document_name FROM document_management_Documents EXCEPT SELECT t1.document_name FROM document_management_Documents AS t1 JOIN document_management_Document_Sections AS t2 ON t1.document_code = t2.document_code JOIN document_management_Document_Sections_Images AS t3 ON t2.section_id = t3.section_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "document_management"
+ },
+ {
+  "question": "What is the type of the document named \"David CV\"?",
+  "gold_sql": "SELECT document_type_code FROM document_management_Documents WHERE document_name = \"David CV\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "document_management"
+ },
+ {
+  "question": "Give the section titles of the document with the name \"David CV\".",
+  "gold_sql": "SELECT t2.section_title FROM document_management_Documents AS t1 JOIN document_management_Document_Sections AS t2 ON t1.document_code = t2.document_code WHERE t1.document_name = \"David CV\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "document_management"
+ },
+ {
+  "question": "What is the id of the student who most recently registered course 301?",
+  "gold_sql": "SELECT student_id FROM student_assessment_Student_Course_Attendance WHERE course_id = 301 ORDER BY date_of_attendance DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "List the id of students who registered course statistics in the order of registration date.",
+  "gold_sql": "SELECT T2.student_id FROM student_assessment_Courses AS T1 JOIN student_assessment_Student_Course_Registrations AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = \"statistics\" ORDER BY T2.registration_date",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "How many registed students do each course have? List course name and the number of their registered students?",
+  "gold_sql": "SELECT T3.course_name, COUNT(*) FROM student_assessment_Students AS T1 JOIN student_assessment_Student_Course_Registrations AS T2 ON T1.student_id = T2.student_id JOIN student_assessment_Courses AS T3 ON T2.course_id = T3.course_id GROUP BY T2.course_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "Find id of the candidate who most recently accessed the course?",
+  "gold_sql": "SELECT candidate_id FROM student_assessment_Candidate_Assessments ORDER BY assessment_date DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "Find distinct cities of addresses of people?",
+  "gold_sql": "SELECT DISTINCT T1.city FROM student_assessment_Addresses AS T1 JOIN student_assessment_People_Addresses AS T2 ON T1.address_id = T2.address_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "List the id of students who registered some courses and the number of their registered courses?",
+  "gold_sql": "SELECT T1.student_id, COUNT(*) FROM student_assessment_Students AS T1 JOIN student_assessment_Student_Course_Registrations AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "student_assessment"
+ },
+ {
+  "question": "How many students have had at least one \"B\" grade?",
+  "gold_sql": "SELECT COUNT(DISTINCT StuID) FROM college_3_Enrolled_in WHERE Grade = \"B\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_3"
+ },
+ {
+  "question": "What are the full names of students minoring in department 140?",
+  "gold_sql": "SELECT T2.Fname, T2.Lname FROM college_3_Minor_in AS T1 JOIN college_3_Student AS T2 ON T1.StuID = T2.StuID WHERE T1.DNO = 140",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_3"
+ },
+ {
+  "question": "What are the distinct first names for students with a grade point of 3.8 or above in at least one course?",
+  "gold_sql": "SELECT DISTINCT T3.Fname FROM college_3_Enrolled_in AS T1 JOIN college_3_Gradeconversion AS T2 ON TRUE JOIN college_3_Student AS T3 ON T1.Grade = T2.lettergrade AND T1.StuID = T3.StuID WHERE T2.gradepoint >= 3.8",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "college_3"
+ },
+ {
+  "question": "Find the name of the department that has no students minored in?",
+  "gold_sql": "SELECT DName FROM college_3_Department EXCEPT SELECT T1.DName FROM college_3_Department AS T1 JOIN college_3_Minor_in AS T2 ON T1.DNO = T2.DNO",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "college_3"
+ },
+ {
+  "question": "Find the max and min grade point for all letter grade.",
+  "gold_sql": "SELECT MAX(gradepoint), MIN(gradepoint) FROM college_3_Gradeconversion",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_3"
+ },
+ {
+  "question": "Find the rank of the faculty that the fewest faculties belong to.",
+  "gold_sql": "SELECT Rank FROM college_3_Faculty GROUP BY Rank ORDER BY COUNT(*) ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_3"
+ },
+ {
+  "question": "What are all the role codes, role names, and role descriptions?",
+  "gold_sql": "SELECT role_code, role_name, role_description FROM cre_Doc_Tracking_DB_Roles",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "Find the code of the role that have the most employees.",
+  "gold_sql": "SELECT role_code FROM cre_Doc_Tracking_DB_Employees GROUP BY role_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "Show the location name for document \"Robin CV\".",
+  "gold_sql": "SELECT T3.location_name FROM cre_Doc_Tracking_DB_All_Documents AS T1 JOIN cre_Doc_Tracking_DB_Document_Locations AS T2 ON T1.document_id = T2.document_id JOIN cre_Doc_Tracking_DB_Ref_Locations AS T3 ON T2.location_code = T3.location_code WHERE T1.document_name = \"Robin CV\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "What are the name and description for role code \"MG\"?",
+  "gold_sql": "SELECT role_name, role_description FROM cre_Doc_Tracking_DB_Roles WHERE role_code = \"MG\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "Find the document type name of the document named \"How to read a book\".",
+  "gold_sql": "SELECT T2.document_type_name FROM cre_Doc_Tracking_DB_All_Documents AS T1 JOIN cre_Doc_Tracking_DB_Ref_Document_Types AS T2 ON T1.document_type_code = T2.document_type_code WHERE T1.document_name = \"How to read a book\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "Which employees have either destroyed a document or made an authorization to do so? Return their employee ids.",
+  "gold_sql": "SELECT Destroyed_by_Employee_ID FROM cre_Doc_Tracking_DB_Documents_to_be_Destroyed UNION SELECT Destruction_Authorised_by_Employee_ID FROM cre_Doc_Tracking_DB_Documents_to_be_Destroyed",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Doc_Tracking_DB"
+ },
+ {
+  "question": "Find the types and details for all premises and order by the premise type.",
+  "gold_sql": "SELECT premises_type, premise_details FROM customers_campaigns_ecommerce_Premises ORDER BY premises_type",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "Show all distinct product categories along with the number of mailshots in each category.",
+  "gold_sql": "SELECT product_category, COUNT(*) FROM customers_campaigns_ecommerce_Mailshot_Campaigns GROUP BY product_category",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "Show the names of customers who have at least 2 mailshots with outcome code 'Order'.",
+  "gold_sql": "SELECT T2.customer_name FROM customers_campaigns_ecommerce_Mailshot_Customers AS T1 JOIN customers_campaigns_ecommerce_Customers AS T2 ON T1.customer_id = T2.customer_id WHERE outcome_code = 'Order' GROUP BY T1.customer_id HAVING COUNT(*) >= 2",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "What are the name and payment method of customers who have both mailshots in 'Order' outcome and mailshots in 'No Response' outcome.",
+  "gold_sql": "SELECT T2.customer_name, T2.payment_method FROM customers_campaigns_ecommerce_Mailshot_Customers AS T1 JOIN customers_campaigns_ecommerce_Customers AS T2 ON T1.customer_id = T2.customer_id WHERE T1.outcome_code = 'Order' INTERSECT SELECT T2.customer_name, T2.payment_method FROM customers_campaigns_ecommerce_Mailshot_Customers AS T1 JOIN customers_campaigns_ecommerce_Customers AS T2 ON T1.customer_id = T2.customer_id WHERE T1.outcome_code = 'No Response'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "How many premises are there?",
+  "gold_sql": "SELECT COUNT(*) FROM customers_campaigns_ecommerce_Premises",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "Show the premise type and address type code for all customer addresses.",
+  "gold_sql": "SELECT T2.premises_type, T1.address_type_code FROM customers_campaigns_ecommerce_Customer_Addresses AS T1 JOIN customers_campaigns_ecommerce_Premises AS T2 ON T1.premise_id = T2.premise_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_campaigns_ecommerce"
+ },
+ {
+  "question": "How many council taxes are collected for renting arrears ?",
+  "gold_sql": "SELECT COUNT(*) FROM local_govt_mdm_Rent_Arrears",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "What are the register ids of electoral registries that have the cross reference source system code 'Electoral' or 'Tax'?",
+  "gold_sql": "SELECT T1.electoral_register_id FROM local_govt_mdm_Electoral_Register AS T1 JOIN local_govt_mdm_CMI_Cross_References AS T2 ON T1.cmi_cross_ref_id = T2.cmi_cross_ref_id WHERE T2.source_system_code = 'Electoral' OR T2.source_system_code = 'Tax'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "What are the renting arrears tax ids related to the customer master index whose detail is not 'Schmidt, Kertzmann and Lubowitz'?",
+  "gold_sql": "SELECT T1.council_tax_id FROM local_govt_mdm_Rent_Arrears AS T1 JOIN local_govt_mdm_CMI_Cross_References AS T2 ON T1.cmi_cross_ref_id = T2.cmi_cross_ref_id JOIN local_govt_mdm_Customer_Master_Index AS T3 ON T3.master_customer_id = T2.master_customer_id WHERE T3.cmi_details <> 'Schmidt ,  Kertzmann and Lubowitz'",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "Which distinct source system code includes the substring 'en'?",
+  "gold_sql": "SELECT DISTINCT source_system_code FROM local_govt_mdm_CMI_Cross_References WHERE source_system_code LIKE '%en%'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "Wat is the tax source system code and master customer id of the taxes related to each parking fine id?",
+  "gold_sql": "SELECT T1.source_system_code, T1.master_customer_id, T2.council_tax_id FROM local_govt_mdm_CMI_Cross_References AS T1 JOIN local_govt_mdm_Parking_Fines AS T2 ON T1.cmi_cross_ref_id = T2.cmi_cross_ref_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "How many business rates are related to each cmi cross reference? List cross reference id, master customer id and the n",
+  "gold_sql": "SELECT T2.cmi_cross_ref_id, T2.master_customer_id, COUNT(*) FROM local_govt_mdm_Business_Rates AS T1 JOIN local_govt_mdm_CMI_Cross_References AS T2 ON T1.cmi_cross_ref_id = T2.cmi_cross_ref_id GROUP BY T2.cmi_cross_ref_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "local_govt_mdm"
+ },
+ {
+  "question": "How many departments does the college has?",
+  "gold_sql": "SELECT COUNT(DISTINCT dept_name) FROM college_1_DEPARTMENT",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_1"
+ },
+ {
+  "question": "How many classes are professor whose last name is Graztevski has?",
+  "gold_sql": "SELECT COUNT(*) FROM college_1_EMPLOYEE AS T1 JOIN college_1_CLASS AS T2 ON T1.EMP_NUM = T2.PROF_NUM WHERE T1.EMP_LNAME = 'Graztevski'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_1"
+ },
+ {
+  "question": "What is department name and office for the professor whose last name is Heffington?",
+  "gold_sql": "SELECT T3.dept_name, T2.prof_office FROM college_1_EMPLOYEE AS T1 JOIN college_1_PROFESSOR AS T2 ON T1.emp_num = T2.emp_num JOIN college_1_DEPARTMENT AS T3 ON T2.dept_code = T3.dept_code WHERE T1.emp_lname = 'Heffington'",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "college_1"
+ },
+ {
+  "question": "Find the first name of student who is taking classes from accounting and Computer Info. Systems departments",
+  "gold_sql": "SELECT T1.stu_fname FROM college_1_STUDENT AS T1 JOIN college_1_ENROLL AS T2 ON T1.stu_num = T2.stu_num JOIN college_1_CLASS AS T3 ON T2.class_code = T3.class_code JOIN college_1_COURSE AS T4 ON T3.crs_code = T4.crs_code JOIN college_1_DEPARTMENT AS T5 ON T5.dept_code = T4.dept_code WHERE T5.dept_name = 'Accounting' INTERSECT SELECT T1.stu_fname FROM college_1_STUDENT AS T1 JOIN college_1_ENROLL AS T2 ON T1.stu_num = T2.stu_num JOIN college_1_CLASS AS T3 ON T2.class_code = T3.class_code JOIN college_1_COURSE AS T4 ON T3.crs_code = T4.crs_code JOIN college_1_DEPARTMENT AS T5 ON T5.dept_code = T4.dept_code WHERE T5.dept_name = 'Computer Info. Systems'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "college_1"
+ },
+ {
+  "question": "How many professors attained either Ph.D. or Masters degrees?",
+  "gold_sql": "SELECT COUNT(*) FROM college_1_PROFESSOR WHERE prof_high_degree = 'Ph.D.' OR prof_high_degree = 'MA'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "college_1"
+ },
+ {
+  "question": "Find the total number of hours have done for all students in each department.",
+  "gold_sql": "SELECT SUM(stu_hrs), dept_code FROM college_1_STUDENT GROUP BY dept_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "college_1"
+ },
+ {
+  "question": "What is the document type description for document type named Film?",
+  "gold_sql": "SELECT document_type_description FROM cre_Docs_and_Epenses_Ref_Document_Types WHERE document_type_name = \"Film\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "Return the type name, type description, and date of creation for each document.",
+  "gold_sql": "SELECT T1.document_type_name, T1.document_type_description, T2.Document_date FROM cre_Docs_and_Epenses_Ref_Document_Types AS T1 JOIN cre_Docs_and_Epenses_Documents AS T2 ON T1.document_type_code = T2.document_type_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "Show ids for all documents in type CV without expense budgets.",
+  "gold_sql": "SELECT document_id FROM cre_Docs_and_Epenses_Documents WHERE document_type_code = \"CV\" EXCEPT SELECT document_id FROM cre_Docs_and_Epenses_Documents_with_Expenses",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "What are the dates for the documents with both 'GV' type and 'SF' type expenses?",
+  "gold_sql": "SELECT T1.document_date FROM cre_Docs_and_Epenses_Documents AS T1 JOIN cre_Docs_and_Epenses_Documents_with_Expenses AS T2 ON T1.document_id = T2.document_id WHERE T2.budget_type_code = 'GV' INTERSECT SELECT T1.document_date FROM cre_Docs_and_Epenses_Documents AS T1 JOIN cre_Docs_and_Epenses_Documents_with_Expenses AS T2 ON T1.document_id = T2.document_id WHERE T2.budget_type_code = 'SF'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "How many budget types do we have?",
+  "gold_sql": "SELECT COUNT(*) FROM cre_Docs_and_Epenses_Ref_Budget_Codes",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "What are the details for statements with the details 'Private Project', and what are the names of the corresponding documents?",
+  "gold_sql": "SELECT T1.statement_details, T2.document_name FROM cre_Docs_and_Epenses_Statements AS T1 JOIN cre_Docs_and_Epenses_Documents AS T2 ON T1.statement_id = T2.document_id WHERE T1.statement_details = 'Private Project'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "cre_Docs_and_Epenses"
+ },
+ {
+  "question": "How many customers have at least one order with status \"Cancelled\"?",
+  "gold_sql": "SELECT COUNT(DISTINCT customer_id) FROM customers_and_addresses_Customer_Orders WHERE order_status = \"Cancelled\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "Find the name of the customer who made an order most recently.",
+  "gold_sql": "SELECT t1.customer_name FROM customers_and_addresses_Customers AS t1 JOIN customers_and_addresses_Customer_Orders AS t2 ON t1.customer_id = t2.customer_id ORDER BY t2.order_date DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "Find the name and ID of the product whose total order quantity is the largest.",
+  "gold_sql": "SELECT t2.product_details, t2.product_id FROM customers_and_addresses_Order_Items AS t1 JOIN customers_and_addresses_Products AS t2 ON t1.product_id = t2.product_id GROUP BY t1.product_id ORDER BY SUM(t1.order_quantity) LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "What are the names of customers who never made an order.",
+  "gold_sql": "SELECT customer_name FROM customers_and_addresses_Customers EXCEPT SELECT t1.customer_name FROM customers_and_addresses_Customers AS t1 JOIN customers_and_addresses_Customer_Orders AS t2 ON t1.customer_id = t2.customer_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "Return all the distinct payment methods used by customers.",
+  "gold_sql": "SELECT DISTINCT payment_method FROM customers_and_addresses_Customers",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "What is the total amount of products purchased before 2018-03-17 07:13:53?",
+  "gold_sql": "SELECT SUM(t2.order_quantity) FROM customers_and_addresses_Customer_Orders AS t1 JOIN customers_and_addresses_Order_Items AS t2 ON t1.order_id = t2.order_id WHERE t1.order_date < \"2018-03-17 07:13:53\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_and_addresses"
+ },
+ {
+  "question": "How many addresses are there in country USA?",
+  "gold_sql": "SELECT COUNT(*) FROM customers_and_products_contacts_Addresses WHERE country = 'USA'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "Show each state and the number of addresses in each state.",
+  "gold_sql": "SELECT state_province_county, COUNT(*) FROM customers_and_products_contacts_Addresses GROUP BY state_province_county",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "Show the name of the customer who has the most orders.",
+  "gold_sql": "SELECT T1.customer_name FROM customers_and_products_contacts_Customers AS T1 JOIN customers_and_products_contacts_Customer_Orders AS T2 ON T1.customer_id = T2.customer_id GROUP BY T1.customer_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "Show the names of customers who have both an order in completed status and an order in part status.",
+  "gold_sql": "SELECT T1.customer_name FROM customers_and_products_contacts_Customers AS T1 JOIN customers_and_products_contacts_Customer_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status_code = 'Completed' INTERSECT SELECT T1.customer_name FROM customers_and_products_contacts_Customers AS T1 JOIN customers_and_products_contacts_Customer_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status_code = 'Part'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "Show the name, phone, and payment method code for all customers in descending order of customer number.",
+  "gold_sql": "SELECT customer_name, customer_phone, payment_method_code FROM customers_and_products_contacts_Customers ORDER BY customer_number DESC",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "Show names and phones of customers who do not have address information.",
+  "gold_sql": "SELECT customer_name, customer_phone FROM customers_and_products_contacts_Customers WHERE NOT customer_id IN (SELECT customer_id FROM customers_and_products_contacts_Customer_Address_History)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_and_products_contacts"
+ },
+ {
+  "question": "What is all the information about employees with D or S in their first name, ordered by salary descending?",
+  "gold_sql": "SELECT * FROM hr_1_employees WHERE first_name LIKE '%D%' OR first_name LIKE '%S%' ORDER BY salary DESC",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "What are the department names, cities, and state provinces for each department?",
+  "gold_sql": "SELECT T1.department_name, T2.city, T2.state_province FROM hr_1_departments AS T1 JOIN hr_1_locations AS T2 ON T2.location_id = T1.location_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "display job title and average salary of employees.",
+  "gold_sql": "SELECT job_title, AVG(salary) FROM hr_1_employees AS T1 JOIN hr_1_jobs AS T2 ON T1.job_id = T2.job_id GROUP BY T2.job_title",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "What are the ids, full names, and salaries for employees making more than average and who work in a department with employees who have the letter J in their first name?",
+  "gold_sql": "SELECT employee_id, first_name, last_name, salary FROM hr_1_employees WHERE salary > (SELECT AVG(salary) FROM hr_1_employees) AND department_id IN (SELECT department_id FROM hr_1_employees WHERE first_name LIKE '%J%')",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "display the emails of the employees who have no commission percentage and salary within the range 7000 to 12000 and works in that department which number is 50.",
+  "gold_sql": "SELECT email FROM hr_1_employees WHERE commission_pct = \"null\" AND salary BETWEEN 7000 AND 12000 AND department_id = 50",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "What are the department ids, full names, and salaries for employees who make the most in their departments?",
+  "gold_sql": "SELECT first_name, last_name, salary, department_id, MAX(salary) FROM hr_1_employees GROUP BY department_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "hr_1"
+ },
+ {
+  "question": "Which customers have the substring \"Diana\" in their names? Return the customer details.",
+  "gold_sql": "SELECT customer_details FROM insurance_and_eClaims_Customers WHERE customer_details LIKE \"%Diana%\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "Find all the policy type codes associated with the customer \"Dayana Robel\"",
+  "gold_sql": "SELECT policy_type_code FROM insurance_and_eClaims_Policies AS t1 JOIN insurance_and_eClaims_Customers AS t2 ON t1.customer_id = t2.customer_id WHERE t2.customer_details = \"Dayana Robel\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "Which claim processing stage has the most claims? Show the claim status name.",
+  "gold_sql": "SELECT t2.claim_status_name FROM insurance_and_eClaims_Claims_Processing AS t1 JOIN insurance_and_eClaims_Claims_Processing_Stages AS t2 ON t1.claim_stage_id = t2.claim_stage_id GROUP BY t1.claim_stage_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "Find the names of customers who have no policies associated.",
+  "gold_sql": "SELECT customer_details FROM insurance_and_eClaims_Customers EXCEPT SELECT t2.customer_details FROM insurance_and_eClaims_Policies AS t1 JOIN insurance_and_eClaims_Customers AS t2 ON t1.customer_id = t2.customer_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "List the names of all the customers in alphabetical order.",
+  "gold_sql": "SELECT customer_details FROM insurance_and_eClaims_Customers ORDER BY customer_details",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "Which type of policy is most frequently used? Give me the policy type code.",
+  "gold_sql": "SELECT policy_type_code FROM insurance_and_eClaims_Policies GROUP BY policy_type_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_and_eClaims"
+ },
+ {
+  "question": "How many services are there?",
+  "gold_sql": "SELECT COUNT(*) FROM insurance_fnol_Services",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "Which policy type appears most frequently in the available policies?",
+  "gold_sql": "SELECT policy_type_code FROM insurance_fnol_Available_Policies GROUP BY policy_type_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "Find the policy types more than 4 customers use. Show their type code.",
+  "gold_sql": "SELECT policy_type_code FROM insurance_fnol_Available_Policies GROUP BY policy_type_code HAVING COUNT(*) > 4",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "Find the names of customers who have used both the service \"Close a policy\" and the service \"New policy application\".",
+  "gold_sql": "SELECT t1.customer_name FROM insurance_fnol_Customers AS t1 JOIN insurance_fnol_First_Notification_of_Loss AS t2 ON t1.customer_id = t2.customer_id JOIN insurance_fnol_Services AS t3 ON t2.service_id = t3.service_id WHERE t3.service_name = \"Close a policy\" INTERSECT SELECT t1.customer_name FROM insurance_fnol_Customers AS t1 JOIN insurance_fnol_First_Notification_of_Loss AS t2 ON t1.customer_id = t2.customer_id JOIN insurance_fnol_Services AS t3 ON t2.service_id = t3.service_id WHERE t3.service_name = \"New policy application\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "What are the phone numbers of customers using the policy with the code \"Life Insurance\"?",
+  "gold_sql": "SELECT customer_phone FROM insurance_fnol_Available_Policies WHERE policy_type_code = \"Life Insurance\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "Retrieve the open and close dates of all the policies associated with the customer whose name contains \"Diana\"",
+  "gold_sql": "SELECT t2.date_opened, t2.date_closed FROM insurance_fnol_Customers AS t1 JOIN insurance_fnol_Customers_Policies AS t2 ON t1.customer_id = t2.customer_id WHERE t1.customer_name LIKE \"%Diana%\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_fnol"
+ },
+ {
+  "question": "return all columns of the albums created in the year of 2012.",
+  "gold_sql": "SELECT * FROM music_2_Albums WHERE YEAR = 2012",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "music_2"
+ },
+ {
+  "question": "Find all the instruments ever used by the musician with last name \"Heilo\"?",
+  "gold_sql": "SELECT instrument FROM music_2_Instruments AS T1 JOIN music_2_Band AS T2 ON T1.bandmateid = T2.id WHERE T2.lastname = \"Heilo\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "music_2"
+ },
+ {
+  "question": "What is the type of vocals that the band member with the last name \"Heilo\" played the most?",
+  "gold_sql": "SELECT TYPE FROM music_2_Vocals AS T1 JOIN music_2_Band AS T2 ON T1.bandmate = T2.id WHERE lastname = \"Heilo\" GROUP BY TYPE ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "music_2"
+ },
+ {
+  "question": "What are the different names of all songs without back vocals?",
+  "gold_sql": "SELECT DISTINCT title FROM music_2_Vocals AS t1 JOIN music_2_Songs AS t2 ON t1.songid = t2.songid EXCEPT SELECT t2.title FROM music_2_Vocals AS t1 JOIN music_2_Songs AS t2 ON t1.songid = t2.songid WHERE TYPE = \"back\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "music_2"
+ },
+ {
+  "question": "What are the names of the songs whose title has the word \"the\"?",
+  "gold_sql": "SELECT title FROM music_2_Songs WHERE title LIKE '% the %'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "music_2"
+ },
+ {
+  "question": "How many instruments does the song \"Badlands\" use?",
+  "gold_sql": "SELECT COUNT(DISTINCT instrument) FROM music_2_Instruments AS T1 JOIN music_2_Songs AS T2 ON T1.songid = T2.songid WHERE title = \"Badlands\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "music_2"
+ },
+ {
+  "question": "What are the first name, last name, and gender of all the good customers? Order by their last name.",
+  "gold_sql": "SELECT first_name, last_name, gender_mf FROM products_for_hire_Customers WHERE good_or_bad_customer = 'good' ORDER BY last_name",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "What are the names of products whose availability equals to 1?",
+  "gold_sql": "SELECT T2.product_name FROM products_for_hire_View_Product_Availability AS T1 JOIN products_for_hire_Products_for_Hire AS T2 ON T1.product_id = T2.product_id WHERE T1.available_yn = 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "How many products are never booked with amount higher than 200?",
+  "gold_sql": "SELECT COUNT(*) FROM products_for_hire_Products_for_Hire WHERE NOT product_id IN (SELECT product_id FROM products_for_hire_Products_Booked WHERE booked_amount > 200)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "What are the coupon amount of the coupons owned by both good and bad customers?",
+  "gold_sql": "SELECT T1.coupon_amount FROM products_for_hire_Discount_Coupons AS T1 JOIN products_for_hire_Customers AS T2 ON T1.coupon_id = T2.coupon_id WHERE T2.good_or_bad_customer = 'good' INTERSECT SELECT T1.coupon_amount FROM products_for_hire_Discount_Coupons AS T1 JOIN products_for_hire_Customers AS T2 ON T1.coupon_id = T2.coupon_id WHERE T2.good_or_bad_customer = 'bad'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "What are the daily hire costs for the products with substring 'Book' in its name?",
+  "gold_sql": "SELECT daily_hire_cost FROM products_for_hire_Products_for_Hire WHERE product_name LIKE '%Book%'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "Are the customers holding coupons with amount 500 bad or good?",
+  "gold_sql": "SELECT T1.good_or_bad_customer FROM products_for_hire_Customers AS T1 JOIN products_for_hire_Discount_Coupons AS T2 ON T1.coupon_id = T2.coupon_id WHERE T2.coupon_amount = 500",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "products_for_hire"
+ },
+ {
+  "question": "Sort all the distinct products in alphabetical order.",
+  "gold_sql": "SELECT DISTINCT product_name FROM tracking_orders_Products ORDER BY product_name",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "Which customers have orders with status \"Packing\"? Give me the customer names.",
+  "gold_sql": "SELECT DISTINCT T1.customer_name FROM tracking_orders_Customers AS T1 JOIN tracking_orders_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Packing\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "Which customers have made at least two orders? Give me each customer name and number of orders made.",
+  "gold_sql": "SELECT T2.customer_name, COUNT(*) FROM tracking_orders_Orders AS T1 JOIN tracking_orders_Customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T2.customer_id HAVING COUNT(*) >= 2",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "Which customers have both \"On Road\" and \"Shipped\" as order status? List the customer names.",
+  "gold_sql": "SELECT T1.customer_name FROM tracking_orders_Customers AS T1 JOIN tracking_orders_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\" INTERSECT SELECT T1.customer_name FROM tracking_orders_Customers AS T1 JOIN tracking_orders_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Shipped\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "List the ids of all distinct orders ordered by placed date.",
+  "gold_sql": "SELECT DISTINCT order_id FROM tracking_orders_Orders ORDER BY date_order_placed",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "Give me a list of id and status of orders which belong to the customer named \"Jeramie\".",
+  "gold_sql": "SELECT T2.order_id, T2.order_status FROM tracking_orders_Customers AS T1 JOIN tracking_orders_Orders AS T2 ON T1.customer_id = T2.customer_id WHERE T1.customer_name = \"Jeramie\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_orders"
+ },
+ {
+  "question": "Show all investor details.",
+  "gold_sql": "SELECT Investor_details FROM tracking_share_transactions_Investors",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "Show the transaction type code that occurs the most frequently.",
+  "gold_sql": "SELECT transaction_type_code FROM tracking_share_transactions_Transactions GROUP BY transaction_type_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "What are the details of all sales and purchases?",
+  "gold_sql": "SELECT sales_details FROM tracking_share_transactions_Sales UNION SELECT purchase_details FROM tracking_share_transactions_Purchases",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "What are the details of the lots which are not used in any transactions?",
+  "gold_sql": "SELECT lot_details FROM tracking_share_transactions_Lots EXCEPT SELECT T1.lot_details FROM tracking_share_transactions_Lots AS T1 JOIN tracking_share_transactions_Transactions_Lots AS T2 ON T1.lot_id = T2.lot_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "Show all transaction ids with transaction code 'PUR'.",
+  "gold_sql": "SELECT transaction_id FROM tracking_share_transactions_Transactions WHERE transaction_type_code = 'PUR'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "Show the average amount of transactions for different investors.",
+  "gold_sql": "SELECT investor_id, AVG(amount_of_transaction) FROM tracking_share_transactions_Transactions GROUP BY investor_id",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_share_transactions"
+ },
+ {
+  "question": "What are dates of birth of all the guests whose gender is \"Male\"?",
+  "gold_sql": "SELECT date_of_birth FROM apartment_rentals_Guests WHERE gender_code = \"Male\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "Show the apartment type codes and apartment numbers in the buildings managed by \"Kyle\".",
+  "gold_sql": "SELECT T2.apt_type_code, T2.apt_number FROM apartment_rentals_Apartment_Buildings AS T1 JOIN apartment_rentals_Apartments AS T2 ON T1.building_id = T2.building_id WHERE T1.building_manager = \"Kyle\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "Find the number of apartments that have no facility.",
+  "gold_sql": "SELECT COUNT(*) FROM apartment_rentals_Apartments WHERE NOT apt_id IN (SELECT apt_id FROM apartment_rentals_Apartment_Facilities)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "Show the apartment numbers of apartments with unit status availability of both 0 and 1.",
+  "gold_sql": "SELECT T1.apt_number FROM apartment_rentals_Apartments AS T1 JOIN apartment_rentals_View_Unit_Status AS T2 ON T1.apt_id = T2.apt_id WHERE T2.available_yn = 0 INTERSECT SELECT T1.apt_number FROM apartment_rentals_Apartments AS T1 JOIN apartment_rentals_View_Unit_Status AS T2 ON T1.apt_id = T2.apt_id WHERE T2.available_yn = 1",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "Find the average number of bedrooms of all the apartments.",
+  "gold_sql": "SELECT AVG(bedroom_count) FROM apartment_rentals_Apartments",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "Which apartment type code appears the most often?",
+  "gold_sql": "SELECT apt_type_code FROM apartment_rentals_Apartments GROUP BY apt_type_code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "apartment_rentals"
+ },
+ {
+  "question": "how many female dependents are there?",
+  "gold_sql": "SELECT COUNT(*) FROM company_1_dependent WHERE sex = 'F'",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "company_1"
+ },
+ {
+  "question": "Find the number of employees of each gender whose salary is lower than 50000.",
+  "gold_sql": "SELECT COUNT(*), sex FROM company_1_employee WHERE salary < 50000 GROUP BY sex",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "company_1"
+ },
+ {
+  "question": "Return the first names and last names of employees who earn more than 30000 in salary.",
+  "gold_sql": "SELECT fname, lname FROM company_1_employee WHERE salary > 30000",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "company_1"
+ },
+ {
+  "question": "Find the names of departments that are located in Houston.",
+  "gold_sql": "SELECT t1.dname FROM company_1_department AS t1 JOIN company_1_dept_locations AS t2 ON t1.dnumber = t2.dnumber WHERE t2.dlocation = 'Houston'",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "company_1"
+ },
+ {
+  "question": "List all department names ordered by their starting date.",
+  "gold_sql": "SELECT dname FROM company_1_department ORDER BY mgr_start_date",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "company_1"
+ },
+ {
+  "question": "list the first and last names, and the addresses of all employees in the ascending order of their birth date.",
+  "gold_sql": "SELECT fname, lname, address FROM company_1_employee ORDER BY Bdate",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "company_1"
+ },
+ {
+  "question": "How many campuses exist are in the county of LA?",
+  "gold_sql": "SELECT COUNT(*) FROM csu_1_Campuses WHERE county = \"Los Angeles\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "How many undergraduates are there in \"San Jose State University\" in year 2004?",
+  "gold_sql": "SELECT SUM(t1.undergraduate) FROM csu_1_discipline_enrollments AS t1 JOIN csu_1_Campuses AS t2 ON t1.campus = t2.id WHERE t1.year = 2004 AND t2.campus = \"San Jose State University\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "How many faculty members did the university that conferred the most degrees in 2002 have?",
+  "gold_sql": "SELECT T2.faculty FROM csu_1_Campuses AS T1 JOIN csu_1_faculty AS T2 ON T1.id = t2.campus JOIN csu_1_degrees AS T3 ON T1.id = t3.campus AND t2.year = t3.year WHERE t2.year = 2002 ORDER BY t3.degrees DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "What are the names of the campus that have more faculties in 2002 than the maximum number in Orange county?",
+  "gold_sql": "SELECT T1.campus FROM csu_1_Campuses AS T1 JOIN csu_1_faculty AS T2 ON T1.id = T2.campus WHERE T2.year = 2002 AND faculty > (SELECT MAX(faculty) FROM csu_1_Campuses AS T1 JOIN csu_1_faculty AS T2 ON T1.id = T2.campus WHERE T2.year = 2002 AND T1.county = \"Orange\")",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "What campuses opened between 1935 and 1939?",
+  "gold_sql": "SELECT campus FROM csu_1_Campuses WHERE YEAR >= 1935 AND YEAR <= 1939",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "What is the campus fee of \"San Francisco State University\" in year 1996?",
+  "gold_sql": "SELECT campusfee FROM csu_1_Campuses AS T1 JOIN csu_1_csu_fees AS T2 ON T1.id = t2.campus WHERE t1.campus = \"San Francisco State University\" AND T2.year = 1996",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "csu_1"
+ },
+ {
+  "question": "How many staff live in state Georgia?",
+  "gold_sql": "SELECT COUNT(*) FROM driving_school_Addresses WHERE state_province_county = \"Georgia\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "List first name and last name of customers lived in city Lockmanfurt.",
+  "gold_sql": "SELECT T1.first_name, T1.last_name FROM driving_school_Customers AS T1 JOIN driving_school_Addresses AS T2 ON T1.customer_address_id = T2.address_id WHERE T2.city = \"Lockmanfurt\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "Which city does has most number of customers?",
+  "gold_sql": "SELECT T2.city FROM driving_school_Customers AS T1 JOIN driving_school_Addresses AS T2 ON T1.customer_address_id = T2.address_id GROUP BY T2.city ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "What is the first name of the staff who did not give any lesson?",
+  "gold_sql": "SELECT first_name FROM driving_school_Staff EXCEPT SELECT T2.first_name FROM driving_school_Lessons AS T1 JOIN driving_school_Staff AS T2 ON T1.staff_id = T2.staff_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "How many staff in total?",
+  "gold_sql": "SELECT COUNT(*) FROM driving_school_Staff",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "For each customer status code, how many customers are classified that way?",
+  "gold_sql": "SELECT customer_status_code, COUNT(*) FROM driving_school_Customers GROUP BY customer_status_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "driving_school"
+ },
+ {
+  "question": "How many tests have result \"Fail\"?",
+  "gold_sql": "SELECT COUNT(*) FROM e_learning_Student_Tests_Taken WHERE test_result = \"Fail\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "List the dates of enrollment and completion of the student with family name \"Zieme\" and personal name \"Bernie\".",
+  "gold_sql": "SELECT T1.date_of_enrolment, T1.date_of_completion FROM e_learning_Student_Course_Enrolment AS T1 JOIN e_learning_Students AS T2 ON T1.student_id = T2.student_id WHERE T2.family_name = \"Zieme\" AND T2.personal_name = \"Bernie\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "What is the name of each course and the corresponding number of student enrollment?",
+  "gold_sql": "SELECT T1.course_name, COUNT(*) FROM e_learning_Courses AS T1 JOIN e_learning_Student_Course_Enrolment AS T2 ON T1.course_id = T2.course_id GROUP BY T1.course_name",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "Which students not enrolled in any course? Find their personal names.",
+  "gold_sql": "SELECT personal_name FROM e_learning_Students EXCEPT SELECT T1.personal_name FROM e_learning_Students AS T1 JOIN e_learning_Student_Course_Enrolment AS T2 ON T1.student_id = T2.student_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "What are all the dates of enrollment and completion in record?",
+  "gold_sql": "SELECT date_of_enrolment, date_of_completion FROM e_learning_Student_Course_Enrolment",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "On what dates did the student whose personal name is \"Karson\" enroll in and complete the courses?",
+  "gold_sql": "SELECT T1.date_of_enrolment, T1.date_of_completion FROM e_learning_Student_Course_Enrolment AS T1 JOIN e_learning_Students AS T2 ON T1.student_id = T2.student_id WHERE T2.personal_name = \"Karson\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "e_learning"
+ },
+ {
+  "question": "What are the different names of the product characteristics?",
+  "gold_sql": "SELECT DISTINCT characteristic_name FROM products_gen_characteristics_Characteristics",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "Give the color description for the product 'catnip'.",
+  "gold_sql": "SELECT t2.color_description FROM products_gen_characteristics_Products AS t1 JOIN products_gen_characteristics_Ref_Colors AS t2 ON t1.color_code = t2.color_code WHERE t1.product_name = \"catnip\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "Count the number of products with the 'hot' charactersitic.",
+  "gold_sql": "SELECT COUNT(*) FROM products_gen_characteristics_Products AS t1 JOIN products_gen_characteristics_Product_Characteristics AS t2 ON t1.product_id = t2.product_id JOIN products_gen_characteristics_Characteristics AS t3 ON t2.characteristic_id = t3.characteristic_id WHERE t3.characteristic_name = \"hot\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "What are characteristic names used at least twice across all products?",
+  "gold_sql": "SELECT t3.characteristic_name FROM products_gen_characteristics_Products AS t1 JOIN products_gen_characteristics_Product_Characteristics AS t2 ON t1.product_id = t2.product_id JOIN products_gen_characteristics_Characteristics AS t3 ON t2.characteristic_id = t3.characteristic_id GROUP BY t3.characteristic_name HAVING COUNT(*) >= 2",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "What are the names of products with category \"Spices\"?",
+  "gold_sql": "SELECT product_name FROM products_gen_characteristics_Products WHERE product_category_code = \"Spices\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "What are the unit of measure and category code for the 'chervil' product?",
+  "gold_sql": "SELECT t2.unit_of_measure, t2.product_category_code FROM products_gen_characteristics_Products AS t1 JOIN products_gen_characteristics_Ref_Product_Categories AS t2 ON t1.product_category_code = t2.product_category_code WHERE t1.product_name = \"chervil\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "products_gen_characteristics"
+ },
+ {
+  "question": "What is the maximum and minimum height of all players?",
+  "gold_sql": "SELECT MAX(weight), MIN(weight) FROM soccer_1_Player",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "Who are the top 3 players in terms of overall rating?",
+  "gold_sql": "SELECT DISTINCT T1.player_name FROM soccer_1_Player AS T1 JOIN soccer_1_Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id ORDER BY overall_rating DESC LIMIT 3",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "What are the names of players who have the best dribbling?",
+  "gold_sql": "SELECT DISTINCT T1.player_name FROM soccer_1_Player AS T1 JOIN soccer_1_Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id WHERE T2.dribbling = (SELECT MAX(overall_rating) FROM soccer_1_Player_Attributes)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "What is the average weight of all players?",
+  "gold_sql": "SELECT AVG(weight) FROM soccer_1_Player",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "List the names of all left-footed players who have overall rating between 85 and 90.",
+  "gold_sql": "SELECT DISTINCT T1.player_name FROM soccer_1_Player AS T1 JOIN soccer_1_Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id WHERE T2.preferred_foot = \"left\" AND T2.overall_rating >= 85 AND T2.overall_rating <= 90",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "List all player names who have an overall rating higher than the average.",
+  "gold_sql": "SELECT DISTINCT T1.player_name FROM soccer_1_Player AS T1 JOIN soccer_1_Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id WHERE T2.overall_rating > (SELECT AVG(overall_rating) FROM soccer_1_Player_Attributes)",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "soccer_1"
+ },
+ {
+  "question": "Find all the ids and dates of the logs for the problem whose id is 10.",
+  "gold_sql": "SELECT problem_log_id, log_entry_date FROM tracking_software_problems_Problem_Log WHERE problem_id = 10",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "Which problems are reported by the staff with first name \"Christop\"? Show the descriptions of the problems.",
+  "gold_sql": "SELECT T1.problem_description FROM tracking_software_problems_Problems AS T1 JOIN tracking_software_problems_Staff AS T2 ON T1.reported_by_staff_id = T2.staff_id WHERE T2.staff_first_name = \"Christop\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "For each product with some problems, list the count of problems and the product id.",
+  "gold_sql": "SELECT COUNT(*), T2.product_id FROM tracking_software_problems_Problems AS T1 JOIN tracking_software_problems_Product AS T2 ON T1.product_id = T2.product_id GROUP BY T2.product_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "For which product was there a problem reported by Christop Berge, with closure authorised by Ashley Medhurst? Return the product ids.",
+  "gold_sql": "SELECT product_id FROM tracking_software_problems_Problems AS T1 JOIN tracking_software_problems_Staff AS T2 ON T1.reported_by_staff_id = T2.staff_id WHERE T2.staff_first_name = \"Christop\" AND T2.staff_last_name = \"Berge\" INTERSECT SELECT product_id FROM tracking_software_problems_Problems AS T1 JOIN tracking_software_problems_Staff AS T2 ON T1.closure_authorised_by_staff_id = T2.staff_id WHERE T2.staff_first_name = \"Ashley\" AND T2.staff_last_name = \"Medhurst\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "List the names of all the distinct product names in alphabetical order?",
+  "gold_sql": "SELECT DISTINCT product_name FROM tracking_software_problems_Product ORDER BY product_name",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "How many problems did the product called \"voluptatem\" have in record?",
+  "gold_sql": "SELECT COUNT(*) FROM tracking_software_problems_Product AS T1 JOIN tracking_software_problems_Problems AS T2 ON T1.product_id = T2.product_id WHERE T1.product_name = \"voluptatem\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "tracking_software_problems"
+ },
+ {
+  "question": "Show the phone, room, and building for the faculty named Jerry Prince.",
+  "gold_sql": "SELECT phone, room, building FROM activity_1_Faculty WHERE Fname = \"Jerry\" AND Lname = \"Prince\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "Which students are advised by Michael Goodrich? Give me their first and last names.",
+  "gold_sql": "SELECT T2.fname, T2.lname FROM activity_1_Faculty AS T1 JOIN activity_1_Student AS T2 ON T1.FacID = T2.advisor WHERE T1.fname = \"Michael\" AND T1.lname = \"Goodrich\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "Show ids for the faculty members who don't advise any student.",
+  "gold_sql": "SELECT FacID FROM activity_1_Faculty EXCEPT SELECT advisor FROM activity_1_Student",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "Find the ids of the students who participate in Canoeing and Kayaking.",
+  "gold_sql": "SELECT T1.stuid FROM activity_1_Participates_in AS T1 JOIN activity_1_Activity AS T2 ON T2.actid = T2.actid WHERE T2.activity_name = 'Canoeing' INTERSECT SELECT T1.stuid FROM activity_1_Participates_in AS T1 JOIN activity_1_Activity AS T2 ON T2.actid = T2.actid WHERE T2.activity_name = 'Kayaking'",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "Count the number of Professors who have office in building NEB.",
+  "gold_sql": "SELECT COUNT(*) FROM activity_1_Faculty WHERE Rank = \"Professor\" AND building = \"NEB\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "How many activities does Mark Giuliano participate in?",
+  "gold_sql": "SELECT COUNT(*) FROM activity_1_Faculty AS T1 JOIN activity_1_Faculty_Participates_in AS T2 ON T1.facID = T2.facID WHERE T1.fname = \"Mark\" AND T1.lname = \"Giuliano\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "activity_1"
+ },
+ {
+  "question": "What is the average number of international passengers for an airport?",
+  "gold_sql": "SELECT AVG(International_Passengers) FROM aircraft_airport",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "what is the name and age of the youngest winning pilot?",
+  "gold_sql": "SELECT t1.name, t1.age FROM aircraft_pilot AS t1 JOIN aircraft_match AS t2 ON t1.pilot_id = t2.winning_pilot ORDER BY t1.age LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "What are the names of all the aircrafts associated with London Gatwick airport?",
+  "gold_sql": "SELECT T1.Aircraft FROM aircraft_aircraft AS T1 JOIN aircraft_airport_aircraft AS T2 ON T1.Aircraft_ID = T2.Aircraft_ID JOIN aircraft_airport AS T3 ON T2.Airport_ID = T3.Airport_ID WHERE T3.Airport_Name = \"London Gatwick\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "Show the names of aircrafts that are associated with both an airport named \"London Heathrow\" and an airport named \"London Gatwick\"",
+  "gold_sql": "SELECT T1.Aircraft FROM aircraft_aircraft AS T1 JOIN aircraft_airport_aircraft AS T2 ON T1.Aircraft_ID = T2.Aircraft_ID JOIN aircraft_airport AS T3 ON T2.Airport_ID = T3.Airport_ID WHERE T3.Airport_Name = \"London Heathrow\" INTERSECT SELECT T1.Aircraft FROM aircraft_aircraft AS T1 JOIN aircraft_airport_aircraft AS T2 ON T1.Aircraft_ID = T2.Aircraft_ID JOIN aircraft_airport AS T3 ON T2.Airport_ID = T3.Airport_ID WHERE T3.Airport_Name = \"London Gatwick\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "What are the descriptions for the aircrafts?",
+  "gold_sql": "SELECT Description FROM aircraft_aircraft",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "How old is the youngest winning pilot and what is their name?",
+  "gold_sql": "SELECT t1.name, t1.age FROM aircraft_pilot AS t1 JOIN aircraft_match AS t2 ON t1.pilot_id = t2.winning_pilot ORDER BY t1.age LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "aircraft"
+ },
+ {
+  "question": "How many diffrent dorm amenities are there?",
+  "gold_sql": "SELECT COUNT(*) FROM dorm_1_Dorm_amenity",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "Find the average age of all students living in the each city.",
+  "gold_sql": "SELECT AVG(age), city_code FROM dorm_1_Student GROUP BY city_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "Find the average age of students living in each dorm and the name of dorm.",
+  "gold_sql": "SELECT AVG(T1.age), T3.dorm_name FROM dorm_1_Student AS T1 JOIN dorm_1_Lives_in AS T2 ON T1.stuid = T2.stuid JOIN dorm_1_Dorm AS T3 ON T3.dormid = T2.dormid GROUP BY T3.dorm_name",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "What is the average age of students who are living in the dorm with the largest capacity?",
+  "gold_sql": "SELECT AVG(T1.age) FROM dorm_1_Student AS T1 JOIN dorm_1_Lives_in AS T2 ON T1.stuid = T2.stuid JOIN dorm_1_Dorm AS T3 ON T3.dormid = T2.dormid WHERE T3.student_capacity = (SELECT MAX(student_capacity) FROM dorm_1_Dorm)",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "Find the name of the dorm with the largest capacity.",
+  "gold_sql": "SELECT dorm_name FROM dorm_1_Dorm ORDER BY student_capacity DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "What is the average age for each city and what are those cities?",
+  "gold_sql": "SELECT AVG(age), city_code FROM dorm_1_Student GROUP BY city_code",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "dorm_1"
+ },
+ {
+  "question": "What is the total amount of payment?",
+  "gold_sql": "SELECT SUM(Amount_Payment) FROM insurance_policies_Payments",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "What is the payment method that were used the least often?",
+  "gold_sql": "SELECT Payment_Method_Code FROM insurance_policies_Payments GROUP BY Payment_Method_Code ORDER BY COUNT(*) ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "List the date the claim was made, the date it was settled and the amount settled for all the claims which had exactly one settlement.",
+  "gold_sql": "SELECT T1.claim_id, T1.date_claim_made, T1.Date_Claim_Settled FROM insurance_policies_Claims AS T1 JOIN insurance_policies_Settlements AS T2 ON T1.Claim_id = T2.Claim_id GROUP BY T1.claim_id HAVING COUNT(*) = 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "Which customer had at least 2 policies but did not file any claims? List the customer details and id.",
+  "gold_sql": "SELECT T1.customer_details, T1.customer_id FROM insurance_policies_Customers AS T1 JOIN insurance_policies_Customer_Policies AS T2 ON T1.Customer_id = T2.customer_id GROUP BY T1.customer_id HAVING COUNT(*) >= 2 EXCEPT SELECT T1.customer_details, T1.customer_id FROM insurance_policies_Customers AS T1 JOIN insurance_policies_Customer_Policies AS T2 ON T1.Customer_id = T2.customer_id JOIN insurance_policies_Claims AS T3 ON T2.policy_id = T3.policy_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "List the method, date and amount of all the payments, in ascending order of date.",
+  "gold_sql": "SELECT Payment_Method_Code, Date_Payment_Made, Amount_Payment FROM insurance_policies_Payments ORDER BY Date_Payment_Made ASC",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "With which kind of payment method were the least number of payments processed?",
+  "gold_sql": "SELECT Payment_Method_Code FROM insurance_policies_Payments GROUP BY Payment_Method_Code ORDER BY COUNT(*) ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "insurance_policies"
+ },
+ {
+  "question": "What are the average and minimum price (in Euro) of all products?",
+  "gold_sql": "SELECT AVG(price_in_euros), MIN(price_in_euros) FROM product_catalog_Catalog_Contents",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "Which attribute definitions have attribute value 0? Give me the attribute name and attribute ID.",
+  "gold_sql": "SELECT t1.attribute_name, t1.attribute_id FROM product_catalog_Attribute_Definitions AS t1 JOIN product_catalog_Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id = t2.attribute_id WHERE t2.attribute_value = 0",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "On which days more than one revisions were made on catalogs.",
+  "gold_sql": "SELECT date_of_latest_revision FROM product_catalog_Catalogs GROUP BY date_of_latest_revision HAVING COUNT(*) > 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "Find the entry names of the catalog with the attribute that have the most entries.",
+  "gold_sql": "SELECT t1.catalog_entry_name FROM product_catalog_Catalog_Contents AS t1 JOIN product_catalog_Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id = t2.catalog_entry_id WHERE t2.attribute_value = (SELECT attribute_value FROM product_catalog_Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY COUNT(*) DESC LIMIT 1)",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "Which catalog content has the highest height? Give me the catalog entry name.",
+  "gold_sql": "SELECT catalog_entry_name FROM product_catalog_Catalog_Contents ORDER BY height DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "Find the name and attribute ID of the attribute definitions with attribute value 0.",
+  "gold_sql": "SELECT t1.attribute_name, t1.attribute_id FROM product_catalog_Attribute_Definitions AS t1 JOIN product_catalog_Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id = t2.attribute_id WHERE t2.attribute_value = 0",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "product_catalog"
+ },
+ {
+  "question": "Advisor 1121 has how many students?",
+  "gold_sql": "SELECT COUNT(*) FROM restaurant_1_Student WHERE Advisor = 1121",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "Which major has least number of students? List the major and the number of students.",
+  "gold_sql": "SELECT Major, COUNT(*) FROM restaurant_1_Student GROUP BY Major ORDER BY COUNT(Major) ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "Which major has between 2 and 30 number of students? List major and the number of students.",
+  "gold_sql": "SELECT Major, COUNT(*) FROM restaurant_1_Student GROUP BY Major HAVING COUNT(Major) BETWEEN 2 AND 30",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "What is the gender of the student Linda Smith?",
+  "gold_sql": "SELECT Sex FROM restaurant_1_Student WHERE Fname = \"Linda\" AND Lname = \"Smith\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "Which Advisor has most of students? List advisor and the number of students.",
+  "gold_sql": "SELECT Advisor, COUNT(*) FROM restaurant_1_Student GROUP BY Advisor ORDER BY COUNT(Advisor) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "What is the rating of the restaurant Subway?",
+  "gold_sql": "SELECT Rating FROM restaurant_1_Restaurant WHERE ResName = \"Subway\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "restaurant_1"
+ },
+ {
+  "question": "Show the names of sponsors of players whose residence is either \"Brandon\" or \"Birtle\".",
+  "gold_sql": "SELECT Sponsor_name FROM riding_club_player WHERE Residence = \"Brandon\" OR Residence = \"Birtle\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "Please show the most common occupation of players.",
+  "gold_sql": "SELECT Occupation FROM riding_club_player GROUP BY Occupation ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "How many gold medals has the club with the most coaches won?",
+  "gold_sql": "SELECT T1.club_id, T1.gold FROM riding_club_match_result AS T1 JOIN riding_club_coach AS T2 ON T1.club_id = T2.club_id GROUP BY T1.club_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "List the name and residence for players whose occupation is not \"Researcher\".",
+  "gold_sql": "SELECT Player_name, residence FROM riding_club_player WHERE Occupation <> \"Researcher\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "Show different occupations along with the number of players in each occupation.",
+  "gold_sql": "SELECT Occupation, COUNT(*) FROM riding_club_player GROUP BY Occupation",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "Show the names of players and names of their coaches.",
+  "gold_sql": "SELECT T3.Player_name, T2.coach_name FROM riding_club_player_coach AS T1 JOIN riding_club_coach AS T2 ON T1.Coach_ID = T2.Coach_ID JOIN riding_club_player AS T3 ON T1.Player_ID = T3.Player_ID",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "riding_club"
+ },
+ {
+  "question": "Show total points of all players.",
+  "gold_sql": "SELECT SUM(Points) FROM sports_competition_player",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "what is the name of the country that participated in the most tournament competitions?",
+  "gold_sql": "SELECT country FROM sports_competition_competition WHERE competition_type = 'Tournament' GROUP BY country ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "What are the positions of players whose average number of points scored by that position is larger than 20?",
+  "gold_sql": "SELECT POSITION FROM sports_competition_player GROUP BY name HAVING AVG(Points) >= 20",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "how many different positions are there?",
+  "gold_sql": "SELECT COUNT(DISTINCT POSITION) FROM sports_competition_player",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "What are the names and players of all the clubs?",
+  "gold_sql": "SELECT T1.name, T2.Player_id FROM sports_competition_club AS T1 JOIN sports_competition_player AS T2 ON T1.Club_ID = T2.Club_ID",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "What are the positions of both players that have more than 20 20 points and less than 10 points?",
+  "gold_sql": "SELECT POSITION FROM sports_competition_player WHERE Points > 20 INTERSECT SELECT POSITION FROM sports_competition_player WHERE Points < 10",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "sports_competition"
+ },
+ {
+  "question": "What are the names of all districts with a city area greater than 10 or have more than 100000 people living there?",
+  "gold_sql": "SELECT district_name FROM store_product_district WHERE city_area > 10 OR City_Population > 100000",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "store_product"
+ },
+ {
+  "question": "What is the most common maximum page size?",
+  "gold_sql": "SELECT max_page_size FROM store_product_product GROUP BY max_page_size ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "store_product"
+ },
+ {
+  "question": "What products are available at store named \"Miramichi\"?",
+  "gold_sql": "SELECT t1.product FROM store_product_product AS t1 JOIN store_product_store_product AS t2 ON t1.product_id = t2.product_id JOIN store_product_store AS t3 ON t2.store_id = t3.store_id WHERE t3.store_name = \"Miramichi\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "store_product"
+ },
+ {
+  "question": "What are the names of the districts that have both mall and village store style shops?",
+  "gold_sql": "SELECT t3.District_name FROM store_product_store AS t1 JOIN store_product_store_district AS t2 ON t1.store_id = t2.store_id JOIN store_product_district AS t3 ON t2.district_id = t3.district_id WHERE t1.Type = \"City Mall\" INTERSECT SELECT t3.District_name FROM store_product_store AS t1 JOIN store_product_store_district AS t2 ON t1.store_id = t2.store_id JOIN store_product_district AS t3 ON t2.district_id = t3.district_id WHERE t1.Type = \"Village Store\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "store_product"
+ },
+ {
+  "question": "What is the name of the district with the most residents?",
+  "gold_sql": "SELECT district_name FROM store_product_district ORDER BY city_population DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "store_product"
+ },
+ {
+  "question": "Find the most prominent max page size among all the products.",
+  "gold_sql": "SELECT max_page_size FROM store_product_product GROUP BY max_page_size ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "store_product"
+ },
+ {
+  "question": "What are all the different start station names for a trip that lasted less than 100?",
+  "gold_sql": "SELECT DISTINCT start_station_name FROM bike_1_trip WHERE duration < 100",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "What is the zip code that has the lowest average mean sea level pressure?",
+  "gold_sql": "SELECT zip_code FROM bike_1_weather GROUP BY zip_code ORDER BY AVG(mean_sea_level_pressure_inches) LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "For each end station id, what is its name, latitude, and minimum duration for trips ended there?",
+  "gold_sql": "SELECT T1.name, T1.lat, MIN(T2.duration) FROM bike_1_station AS T1 JOIN bike_1_trip AS T2 ON T1.id = T2.end_station_id GROUP BY T2.end_station_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "What are names of stations that have average bike availability above 10 and are not located in San Jose city?",
+  "gold_sql": "SELECT T1.name FROM bike_1_station AS T1 JOIN bike_1_status AS T2 ON T1.id = T2.station_id GROUP BY T2.station_id HAVING AVG(bikes_available) > 10 EXCEPT SELECT name FROM bike_1_station WHERE city = \"San Jose\"",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "When and in what zip code did max temperature reach 80?",
+  "gold_sql": "SELECT date, zip_code FROM bike_1_weather WHERE max_temperature_f >= 80",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "Which trip started from the station with the largest dock count? Give me the trip id.",
+  "gold_sql": "SELECT T1.id FROM bike_1_trip AS T1 JOIN bike_1_station AS T2 ON T1.start_station_id = T2.id ORDER BY T2.dock_count DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "bike_1"
+ },
+ {
+  "question": "Which three cities have the largest regional population?",
+  "gold_sql": "SELECT city FROM city_record_city ORDER BY regional_population DESC LIMIT 3",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "city_record"
+ },
+ {
+  "question": "Give me the temperature of Shanghai in January.",
+  "gold_sql": "SELECT T2.Jan FROM city_record_city AS T1 JOIN city_record_temperature AS T2 ON T1.city_id = T2.city_id WHERE T1.city = \"Shanghai\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "city_record"
+ },
+ {
+  "question": "What is the venue of the competition \"1994 FIFA World Cup qualification\" hosted by \"Nanjing ( Jiangsu )\"?",
+  "gold_sql": "SELECT T3.venue FROM city_record_city AS T1 JOIN city_record_hosting_city AS T2 ON T1.city_id = T2.host_city JOIN city_record_match AS T3 ON T2.match_id = T3.match_id WHERE T1.city = \"Nanjing ( Jiangsu )\" AND T3.competition = \"1994 FIFA World Cup qualification\"",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "city_record"
+ },
+ {
+  "question": "Give me a list of cities whose temperature in Feb is higher than that in Jun or cities that were once host cities?",
+  "gold_sql": "SELECT T1.city FROM city_record_city AS T1 JOIN city_record_temperature AS T2 ON T1.city_id = T2.city_id WHERE T2.Feb > T2.Jun UNION SELECT T3.city FROM city_record_city AS T3 JOIN city_record_hosting_city AS T4 ON T3.city_id = T4.host_city",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "city_record"
+ },
+ {
+  "question": "What are the three largest cities in terms of regional population?",
+  "gold_sql": "SELECT city FROM city_record_city ORDER BY regional_population DESC LIMIT 3",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "city_record"
+ },
+ {
+  "question": "Which cities' temperature in March is lower than that in July or higher than that in Oct?",
+  "gold_sql": "SELECT T1.city FROM city_record_city AS T1 JOIN city_record_temperature AS T2 ON T1.city_id = T2.city_id WHERE T2.Mar < T2.Jul OR T2.Mar > T2.Oct",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "city_record"
+ },
+ {
+  "question": "Find the ids and names of members who are under age 30 or with black membership card.",
+  "gold_sql": "SELECT name, member_id FROM coffee_shop_member WHERE Membership_card = 'Black' OR age < 30",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "which shop has happy hour most frequently? List its id and number of happy hours.",
+  "gold_sql": "SELECT shop_id, COUNT(*) FROM coffee_shop_happy_hour GROUP BY shop_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "Which address do not have any member with the black membership card?",
+  "gold_sql": "SELECT address FROM coffee_shop_member EXCEPT SELECT address FROM coffee_shop_member WHERE Membership_card = 'Black'",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "Show the shop addresses ordered by their opening year.",
+  "gold_sql": "SELECT address FROM coffee_shop_shop ORDER BY open_year",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "Find the number of members living in each address.",
+  "gold_sql": "SELECT COUNT(*), address FROM coffee_shop_member GROUP BY address",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "Which address has both members younger than 30 and members older than 40?",
+  "gold_sql": "SELECT address FROM coffee_shop_member WHERE age < 30 INTERSECT SELECT address FROM coffee_shop_member WHERE age > 40",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "coffee_shop"
+ },
+ {
+  "question": "Find the name and category of the most expensive product.",
+  "gold_sql": "SELECT product_name, product_category_code FROM customer_complaints_Products ORDER BY product_price DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "Give the state that has the most customers.",
+  "gold_sql": "SELECT state FROM customer_complaints_Customers GROUP BY state ORDER BY COUNT(*) LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "Return complaint status codes have more than 3 corresponding complaints?",
+  "gold_sql": "SELECT complaint_status_code FROM customer_complaints_Complaints GROUP BY complaint_status_code HAVING COUNT(*) > 3",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "What is the name and category code of the product with the highest price?",
+  "gold_sql": "SELECT product_name, product_category_code FROM customer_complaints_Products ORDER BY product_price DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "Which state has the most customers?",
+  "gold_sql": "SELECT state FROM customer_complaints_Customers GROUP BY state ORDER BY COUNT(*) LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "Find the phone number of all the customers and staff.",
+  "gold_sql": "SELECT phone_number FROM customer_complaints_Customers UNION SELECT phone_number FROM customer_complaints_Staff",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customer_complaints"
+ },
+ {
+  "question": "Count the number of accounts.",
+  "gold_sql": "SELECT COUNT(*) FROM customers_card_transactions_Accounts",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "Show the customer id and number of accounts with most accounts.",
+  "gold_sql": "SELECT customer_id, COUNT(*) FROM customers_card_transactions_Accounts GROUP BY customer_id ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "Give the full name and customer id of the customer with the fewest accounts.",
+  "gold_sql": "SELECT T2.customer_first_name, T2.customer_last_name, T1.customer_id FROM customers_card_transactions_Accounts AS T1 JOIN customers_card_transactions_Customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T1.customer_id ORDER BY COUNT(*) ASC LIMIT 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "What are the full names of customers who do not have any accounts?",
+  "gold_sql": "SELECT customer_first_name, customer_last_name FROM customers_card_transactions_Customers EXCEPT SELECT T1.customer_first_name, T1.customer_last_name FROM customers_card_transactions_Customers AS T1 JOIN customers_card_transactions_Accounts AS T2 ON T1.customer_id = T2.customer_id",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "What are the account ids, customer ids, and account names for all the accounts?",
+  "gold_sql": "SELECT account_id, customer_id, account_name FROM customers_card_transactions_Accounts",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "What is the first name, last name, and phone of the customer with account name 162?",
+  "gold_sql": "SELECT T2.customer_first_name, T2.customer_last_name, T2.customer_phone FROM customers_card_transactions_Accounts AS T1 JOIN customers_card_transactions_Customers AS T2 ON T1.customer_id = T2.customer_id WHERE T1.account_name = \"162\"",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "customers_card_transactions"
+ },
+ {
+  "question": "Find the number of reviews.",
+  "gold_sql": "SELECT COUNT(*) FROM epinions_1_review",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "Find the titles of items that received any rating below 5.",
+  "gold_sql": "SELECT T1.title FROM epinions_1_item AS T1 JOIN epinions_1_review AS T2 ON T1.i_id = T2.i_id WHERE T2.rating < 5",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "Find each target user's name and average trust score.",
+  "gold_sql": "SELECT T1.name, AVG(trust) FROM epinions_1_useracct AS T1 JOIN epinions_1_trust AS T2 ON T1.u_id = T2.target_u_id GROUP BY T2.target_u_id",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "Find the names of items whose rank is higher than 3 and whose average rating is above 5.",
+  "gold_sql": "SELECT T1.title FROM epinions_1_item AS T1 JOIN epinions_1_review AS T2 ON T1.i_id = T2.i_id WHERE T2.rank > 3 INTERSECT SELECT T1.title FROM epinions_1_item AS T1 JOIN epinions_1_review AS T2 ON T1.i_id = T2.i_id GROUP BY T2.i_id HAVING AVG(T2.rating) > 5",
+  "db_id": "merged_500",
+  "difficulty": "extra hard",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "List all information in the item table.",
+  "gold_sql": "SELECT * FROM epinions_1_item",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "Find the names of goods that receive a rating of 10.",
+  "gold_sql": "SELECT T1.title FROM epinions_1_item AS T1 JOIN epinions_1_review AS T2 ON T1.i_id = T2.i_id WHERE T2.rating = 10",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "epinions_1"
+ },
+ {
+  "question": "Give the average number of working horses on farms with more than 5000 total horses.",
+  "gold_sql": "SELECT AVG(Working_Horses) FROM farm_farm WHERE Total_Horses > 5000",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "farm"
+ },
+ {
+  "question": "Return the different statuses of cities, ascending by frequency.",
+  "gold_sql": "SELECT Status FROM farm_city GROUP BY Status ORDER BY COUNT(*) ASC",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "farm"
+ },
+ {
+  "question": "Show the official names of the cities that have hosted more than one competition.",
+  "gold_sql": "SELECT T1.Official_Name FROM farm_city AS T1 JOIN farm_farm_competition AS T2 ON T1.City_ID = T2.Host_city_ID GROUP BY T2.Host_city_ID HAVING COUNT(*) > 1",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "farm"
+ },
+ {
+  "question": "Show the census ranking of cities whose status are not \"Village\".",
+  "gold_sql": "SELECT Census_Ranking FROM farm_city WHERE Status <> \"Village\"",
+  "db_id": "merged_500",
+  "difficulty": "easy",
+  "source_db": "farm"
+ },
+ {
+  "question": "Give the years and official names of the cities of each competition.",
+  "gold_sql": "SELECT T2.Year, T1.Official_Name FROM farm_city AS T1 JOIN farm_farm_competition AS T2 ON T1.City_ID = T2.Host_city_ID",
+  "db_id": "merged_500",
+  "difficulty": "medium",
+  "source_db": "farm"
+ },
+ {
+  "question": "Show the status shared by cities with population bigger than 1500 and smaller than 500.",
+  "gold_sql": "SELECT Status FROM farm_city WHERE Population > 1500 INTERSECT SELECT Status FROM farm_city WHERE Population < 500",
+  "db_id": "merged_500",
+  "difficulty": "hard",
+  "source_db": "farm"
+ }
+]
