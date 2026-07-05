@@ -1,0 +1,1052 @@
+[
+ {
+  "question": "How many players did Boston Red Stockings have in 2000?",
+  "gold_sql": "SELECT count(*) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings' AND T1.year  =  2000",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the number of tied games (the value of \"ties\" is '1') in 1885 postseason.",
+  "gold_sql": "SELECT count(*) FROM baseball_1_postseason WHERE YEAR  =  1885 AND ties  =  1;",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What were all the salary values of players in 2010 and 2001?",
+  "gold_sql": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2010 UNION SELECT salary FROM baseball_1_salary WHERE YEAR = 2001",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Count the total number of games the team Boston Red Stockings attended from 1990 to 2000.",
+  "gold_sql": "SELECT sum(T1.games) FROM baseball_1_home_game AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings' AND T1.year BETWEEN 1990 AND 2000;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "List the first and last name for players who participated in all star game in 1998.",
+  "gold_sql": "SELECT name_first ,  name_last FROM baseball_1_player AS T1 JOIN baseball_1_all_star AS T2 ON T1.player_id  =  T2.player_id WHERE YEAR  =  1998",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "List the 3 highest salaries of the players in 2001?",
+  "gold_sql": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2001 ORDER BY salary DESC LIMIT 3",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are the first name, last name and id of the player with the most all star game experiences? Also list the count.",
+  "gold_sql": "SELECT T1.name_first , T1.name_last ,  T1.player_id ,   count(*) FROM baseball_1_player AS T1 JOIN baseball_1_all_star AS T2 ON T1.player_id  =  T2.player_id GROUP BY T1.player_id ORDER BY count(*) DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which team offers the lowest average salary? Give me the name and id of the team.",
+  "gold_sql": "SELECT T1.name, T1.team_id FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id ORDER BY AVG(T2.salary) ASC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Show me the number of parks the state of NY has.",
+  "gold_sql": "SELECT count(*) FROM baseball_1_park WHERE state  =  'NY';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many players were in the team Boston Red Stockings in 2000?",
+  "gold_sql": "SELECT count(*) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings' AND T1.year  =  2000",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Count the number of players who enter hall of fame for each year.",
+  "gold_sql": "SELECT yearid ,  count(*) FROM baseball_1_hall_of_fame GROUP BY yearid;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "For each year, return the year and the average number of attendance at home games.",
+  "gold_sql": "SELECT YEAR ,  avg(attendance) FROM baseball_1_home_game GROUP BY YEAR;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the total salary expenses of team Boston Red Stockings in 2010?",
+  "gold_sql": "SELECT SUM(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings' AND T1.year = 2010",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many games were played in park \"Columbia Park\" in 1907?",
+  "gold_sql": "SELECT count(*) FROM baseball_1_home_game AS T1 JOIN baseball_1_park AS T2 ON T1.park_id  =  T2.park_id WHERE T1.year = 1907 AND T2.park_name = 'Columbia baseball_1_park';",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Compute the average salary of the players in the team called 'Boston Red Stockings'.",
+  "gold_sql": "SELECT AVG(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings'",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "List the maximum scores of the team Boston Red Stockings when the team won in postseason?",
+  "gold_sql": "SELECT max(T1.wins) FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings';",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many games in total did team Boston Red Stockings attend from 2000 to 2010?",
+  "gold_sql": "SELECT sum(T1.attendance) FROM baseball_1_home_game AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' AND T1.year BETWEEN 2000 AND 2010;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "For each year, return the year and the number of times the team Boston Red Stockings won in the postseasons.",
+  "gold_sql": "SELECT count(*) ,  T1.year FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' GROUP BY T1.year",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the year in which the least people enter hall of fame.",
+  "gold_sql": "SELECT yearid FROM baseball_1_hall_of_fame GROUP BY yearid ORDER BY count(*) ASC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the average height of the players from the college named 'Yale University'?",
+  "gold_sql": "SELECT avg(T1.height) FROM baseball_1_player AS T1 JOIN baseball_1_player_college AS T2 ON T1.player_id  =  T2.player_id JOIN baseball_1_college AS T3 ON T3.college_id  =  T2.college_id WHERE T3.name_full  =  'Yale University';",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many parks are there in Atlanta city?",
+  "gold_sql": "SELECT count(*) FROM baseball_1_park WHERE city = 'Atlanta';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many players born in USA are right-handed batters? That is, have the batter value 'R'.",
+  "gold_sql": "SELECT count(*) FROM baseball_1_player WHERE birth_country = 'USA' AND bats  =  'R';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How much salary did the top 3 well-paid players get in 2001?",
+  "gold_sql": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2001 ORDER BY salary DESC LIMIT 3",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "For each team, return the team name, id and the maximum salary among the team.",
+  "gold_sql": "SELECT T1.name, T1.team_id, MAX(T2.salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the players' first name and last name who won award both in 1960 and in 1961.",
+  "gold_sql": "SELECT T1.name_first , T1.name_last FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 WHERE T2.year  =  1960 INTERSECT SELECT T1.name_first , T1.name_last FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 WHERE T2.year  =  1961",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which park did the most people attend in 2008?",
+  "gold_sql": "SELECT T2.park_name FROM baseball_1_home_game AS T1 JOIN baseball_1_park AS T2 ON T1.park_id  =  T2.park_id WHERE T1.year = 2008 ORDER BY T1.attendance DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find all the players' first name and last name who have empty death record.",
+  "gold_sql": "SELECT name_first ,  name_last FROM baseball_1_player WHERE death_year = '';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "List the names of states that have more than 2 parks.",
+  "gold_sql": "SELECT state FROM baseball_1_park GROUP BY state HAVING count(*)  >  2;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which cities have 2 to 4 parks?",
+  "gold_sql": "SELECT city FROM baseball_1_park GROUP BY city HAVING count(*) BETWEEN 2 AND 4;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are the maximum scores the team Boston Red Stockings got when the team won in postseason?",
+  "gold_sql": "SELECT max(T1.wins) FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings';",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which 3 players won the most player awards? List their full name and id.",
+  "gold_sql": "SELECT T1.name_first ,  T1.name_last ,  T1.player_id FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 ON T1.player_id  =  T2.player_id GROUP BY T1.player_id ORDER BY count(*) DESC LIMIT 3;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many parks does Atlanta city have?",
+  "gold_sql": "SELECT count(*) FROM baseball_1_park WHERE city = 'Atlanta';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the full name and id of the college that has the most baseball players.",
+  "gold_sql": "SELECT T1.name_full ,  T1.college_id FROM baseball_1_college AS T1 JOIN baseball_1_player_college AS T2 ON T1.college_id  =  T2.college_id GROUP BY T1.college_id ORDER BY count(*) DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are the three countries that the least players are from?",
+  "gold_sql": "SELECT birth_country FROM baseball_1_player GROUP BY birth_country ORDER BY count(*) ASC LIMIT 3;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are first and last names of players participating in all star game in 1998?",
+  "gold_sql": "SELECT name_first ,  name_last FROM baseball_1_player AS T1 JOIN baseball_1_all_star AS T2 ON T1.player_id  =  T2.player_id WHERE YEAR  =  1998",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the team that attended the least number of home games in 1980.",
+  "gold_sql": "SELECT T2.name FROM baseball_1_home_game AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T1.year = 1980 ORDER BY T1.attendance ASC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which manager won the most manager award? Give me the manager's first name, last name and id.",
+  "gold_sql": "SELECT T1.name_first ,  T1.name_last ,  T2.player_id FROM baseball_1_player AS T1 JOIN baseball_1_manager_award AS T2 ON T1.player_id  =  T2.player_id GROUP BY T2.player_id ORDER BY count(*) DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which park had most attendances in 2008?",
+  "gold_sql": "SELECT T2.park_name FROM baseball_1_home_game AS T1 JOIN baseball_1_park AS T2 ON T1.park_id  =  T2.park_id WHERE T1.year = 2008 ORDER BY T1.attendance DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are the name and id of the team with the most victories in 2008 postseason?",
+  "gold_sql": "SELECT T2.name ,  T1.team_id_winner FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T1.year  =  2008 GROUP BY T1.team_id_winner ORDER BY count(*) DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "In which year did the least people enter hall of fame?",
+  "gold_sql": "SELECT yearid FROM baseball_1_hall_of_fame GROUP BY yearid ORDER BY count(*) ASC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the highest salary among each team? List the team name, id and maximum salary.",
+  "gold_sql": "SELECT T1.name, T1.team_id, MAX(T2.salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What are the first name and last name of the players whose death record is empty?",
+  "gold_sql": "SELECT name_first ,  name_last FROM baseball_1_player WHERE death_year = '';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the number of team franchises that are active (have 'Y' as \"active\" information).",
+  "gold_sql": "SELECT count(*) FROM baseball_1_team_franchise WHERE active = 'Y';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Count the number of games taken place in park \"Columbia Park\" in 1907.",
+  "gold_sql": "SELECT count(*) FROM baseball_1_home_game AS T1 JOIN baseball_1_park AS T2 ON T1.park_id  =  T2.park_id WHERE T1.year = 1907 AND T2.park_name = 'Columbia baseball_1_park';",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Count the number of players who were born in USA and have bats information 'R'.",
+  "gold_sql": "SELECT count(*) FROM baseball_1_player WHERE birth_country = 'USA' AND bats  =  'R';",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Find the first name, last name and id for the top three players won the most player awards.",
+  "gold_sql": "SELECT T1.name_first ,  T1.name_last ,  T1.player_id FROM baseball_1_player AS T1 JOIN baseball_1_player_award AS T2 ON T1.player_id  =  T2.player_id GROUP BY T1.player_id ORDER BY count(*) DESC LIMIT 3;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "How many times in total did the team Boston Red Stockings participate in postseason games?",
+  "gold_sql": "SELECT count(*) FROM ( SELECT * FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' UNION SELECT * FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_loser  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' );",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "In 2014, what are the id and rank of the team that has the largest average number of attendance?",
+  "gold_sql": "SELECT T2.team_id ,  T2.rank FROM baseball_1_home_game AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id WHERE T1.year  =  2014 GROUP BY T1.team_id ORDER BY avg(T1.attendance) DESC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the total number of postseason games that team Boston Red Stockings participated in?",
+  "gold_sql": "SELECT count(*) FROM ( SELECT * FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_winner  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' UNION SELECT * FROM baseball_1_postseason AS T1 JOIN baseball_1_team AS T2 ON T1.team_id_loser  =  T2.team_id_br WHERE T2.name  =  'Boston Red Stockings' );",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "Which team had the least number of attendances in home games in 1980?",
+  "gold_sql": "SELECT T2.name FROM baseball_1_home_game AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T1.year = 1980 ORDER BY T1.attendance ASC LIMIT 1;",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "baseball_1"
+ },
+ {
+  "question": "What is the name of the most expensive product?",
+  "gold_sql": "SELECT Product_Name FROM cre_Drama_Workshop_Groups_Products ORDER BY Product_Price DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "List the description, code and the number of services for each service type.",
+  "gold_sql": "SELECT T1.Service_Type_Description ,  T2.Service_Type_Code ,  COUNT(*) FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code GROUP BY T2.Service_Type_Code",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the names of the clients who do not have any booking?",
+  "gold_sql": "SELECT Customer_Name FROM cre_Drama_Workshop_Groups_Clients EXCEPT SELECT T2.Customer_Name FROM cre_Drama_Workshop_Groups_Bookings AS T1 JOIN cre_Drama_Workshop_Groups_Clients AS T2 ON T1.Customer_ID  =  T2.Client_ID",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "For each distinct product name, show its average product price.",
+  "gold_sql": "SELECT Product_Name ,  avg(Product_Price) FROM cre_Drama_Workshop_Groups_Products GROUP BY Product_Name",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the product names whose average product price is below 1000000.",
+  "gold_sql": "SELECT Product_Name FROM cre_Drama_Workshop_Groups_Products GROUP BY Product_Name HAVING avg(Product_Price)  <  1000000",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the store names of drama workshop groups?",
+  "gold_sql": "SELECT Store_Name FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the states or counties where the stores with marketing region code \"CA\" are located.",
+  "gold_sql": "SELECT T1.State_County FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Stores AS T2 ON T1.Address_ID  =  T2.Address_ID WHERE T2.Marketing_Region_Code  =  \"CA\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the total order quantities of photo products?",
+  "gold_sql": "SELECT sum(T1.Order_Quantity) FROM cre_Drama_Workshop_Groups_Order_Items AS T1 JOIN cre_Drama_Workshop_Groups_Products AS T2 ON T1.Product_ID  =  T2.Product_ID WHERE T2.Product_Name  =  \"photo\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "List the order dates of all the bookings.",
+  "gold_sql": "SELECT Order_Date FROM cre_Drama_Workshop_Groups_Bookings",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the order detail for the products with price above 2000.",
+  "gold_sql": "SELECT T1.Other_Item_Details FROM cre_Drama_Workshop_Groups_Order_Items AS T1 JOIN cre_Drama_Workshop_Groups_Products AS T2 ON T1.Product_ID  =  T2.Product_ID WHERE T2.Product_price  >  2000",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the phone and email for customer Harold?",
+  "gold_sql": "SELECT Customer_Phone ,  Customer_Email_Address FROM cre_Drama_Workshop_Groups_Customers WHERE Customer_Name  =  \"Harold\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show the names of all the clients with no booking.",
+  "gold_sql": "SELECT Customer_Name FROM cre_Drama_Workshop_Groups_Clients EXCEPT SELECT T2.Customer_Name FROM cre_Drama_Workshop_Groups_Bookings AS T1 JOIN cre_Drama_Workshop_Groups_Clients AS T2 ON T1.Customer_ID  =  T2.Client_ID",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the names of workshop groups in which services with product name \"film\" are performed?",
+  "gold_sql": "SELECT T1.Store_Phone ,  T1.Store_Email_Address FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Workshop_Group_ID  =  T2.Workshop_Group_ID WHERE T2.Product_Name  =  \"film\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the distinct payment method codes in all the invoices?",
+  "gold_sql": "SELECT DISTINCT payment_method_code FROM cre_Drama_Workshop_Groups_Invoices",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the descriptions of the service types with product price above 100?",
+  "gold_sql": "SELECT T1.Service_Type_Description FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code WHERE T2.Product_Price  >  100",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the description, code and the corresponding count of each service type?",
+  "gold_sql": "SELECT T1.Service_Type_Description ,  T2.Service_Type_Code ,  COUNT(*) FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code GROUP BY T2.Service_Type_Code",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the distinct names of the products that cost more than the average?",
+  "gold_sql": "SELECT DISTINCT Product_Name FROM cre_Drama_Workshop_Groups_Products WHERE Product_Price  >  (SELECT avg(Product_Price) FROM cre_Drama_Workshop_Groups_Products)",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the names of the workshop groups that have bookings with status code \"stop\"?",
+  "gold_sql": "SELECT T2.Store_Name FROM cre_Drama_Workshop_Groups_Bookings AS T1 JOIN cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T2 ON T1.Workshop_Group_ID  =  T2.Workshop_Group_ID WHERE T1.Status_Code  =  \"stop\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the states or counties of the address of the stores with marketing region code \"CA\"?",
+  "gold_sql": "SELECT T1.State_County FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Stores AS T2 ON T1.Address_ID  =  T2.Address_ID WHERE T2.Marketing_Region_Code  =  \"CA\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Count the total number of bookings made.",
+  "gold_sql": "SELECT count(*) FROM cre_Drama_Workshop_Groups_Bookings",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Which marketing region has the most drama workshop groups? Give me the region code.",
+  "gold_sql": "SELECT Marketing_Region_Code FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups GROUP BY Marketing_Region_Code ORDER BY count(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the phone number and email address of customer \"Harold\".",
+  "gold_sql": "SELECT Customer_Phone ,  Customer_Email_Address FROM cre_Drama_Workshop_Groups_Customers WHERE Customer_Name  =  \"Harold\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the product ID of the most frequently ordered item on invoices?",
+  "gold_sql": "SELECT Product_ID FROM cre_Drama_Workshop_Groups_Invoices GROUP BY Product_ID ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "How many distinct currency codes are there for all drama workshop groups?",
+  "gold_sql": "SELECT count(DISTINCT Currency_Code) FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the different product names? What is the average product price for each of them?",
+  "gold_sql": "SELECT Product_Name ,  avg(Product_Price) FROM cre_Drama_Workshop_Groups_Products GROUP BY Product_Name",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the phones and emails of workshop groups in which services are performed?",
+  "gold_sql": "SELECT T1.Store_Phone ,  T1.Store_Email_Address FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Workshop_Group_ID  =  T2.Workshop_Group_ID",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Tell me the name of the most pricy product.",
+  "gold_sql": "SELECT Product_Name FROM cre_Drama_Workshop_Groups_Products ORDER BY Product_Price DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the marketing region code that has the most drama workshop groups?",
+  "gold_sql": "SELECT Marketing_Region_Code FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups GROUP BY Marketing_Region_Code ORDER BY count(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the description and code of the type of service that is performed the most often?",
+  "gold_sql": "SELECT T1.Service_Type_Description , T1.Service_Type_Code FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code GROUP BY T1.Service_Type_Code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show all cities along with the number of drama workshop groups in each city.",
+  "gold_sql": "SELECT T1.City_Town ,  count(*) FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T2 ON T1.Address_ID  =  T2.Address_ID GROUP BY T1.City_Town",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "List all product names in ascending order of price.",
+  "gold_sql": "SELECT Product_Name FROM cre_Drama_Workshop_Groups_Products ORDER BY Product_Price ASC",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "List the distinct payment method codes with the number of orders made",
+  "gold_sql": "SELECT payment_method_code ,  count(*) FROM cre_Drama_Workshop_Groups_Invoices GROUP BY payment_method_code",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show all the distinct product names with price higher than the average.",
+  "gold_sql": "SELECT DISTINCT Product_Name FROM cre_Drama_Workshop_Groups_Products WHERE Product_Price  >  (SELECT avg(Product_Price) FROM cre_Drama_Workshop_Groups_Products)",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the email addresses of the drama workshop groups with address in Alaska state?",
+  "gold_sql": "SELECT T2.Store_Email_Address FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T2 ON T1.Address_ID  =  T2.Address_ID WHERE T1.State_County  =  \"Alaska\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the description of the marketing region China?",
+  "gold_sql": "SELECT Marketing_Region_Descriptrion FROM cre_Drama_Workshop_Groups_Marketing_Regions WHERE Marketing_Region_Name  =  \"China\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Give me the descriptions of the service types that cost more than 100.",
+  "gold_sql": "SELECT T1.Service_Type_Description FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code WHERE T2.Product_Price  >  100",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the product names with average product price smaller than 1000000?",
+  "gold_sql": "SELECT Product_Name FROM cre_Drama_Workshop_Groups_Products GROUP BY Product_Name HAVING avg(Product_Price)  <  1000000",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show all cities where at least one customer lives in but no performer lives in.",
+  "gold_sql": "SELECT T1.City_Town FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Customers AS T2 ON T1.Address_ID  =  T2.Address_ID EXCEPT SELECT T1.City_Town FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Performers AS T2 ON T1.Address_ID  =  T2.Address_ID",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the description of the service type which offers both the photo product and the film product?",
+  "gold_sql": "SELECT T1.Service_Type_Description FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code WHERE T2.Product_Name  =  'photo' INTERSECT SELECT T1.Service_Type_Description FROM cre_Drama_Workshop_Groups_Ref_Service_Types AS T1 JOIN cre_Drama_Workshop_Groups_Services AS T2 ON T1.Service_Type_Code  =  T2.Service_Type_Code WHERE T2.Product_Name  =  'film'",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the order dates of orders with price higher than 1000?",
+  "gold_sql": "SELECT T1.Order_Date FROM cre_Drama_Workshop_Groups_Customer_Orders AS T1 JOIN cre_Drama_Workshop_Groups_Order_Items AS T2 ON T1.Order_ID  =  T2.Order_ID JOIN cre_Drama_Workshop_Groups_Products AS T3 ON T2.Product_ID  =  T3.Product_ID WHERE T3.Product_price  >  1000",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Find the phone number of performer \"Ashley\".",
+  "gold_sql": "SELECT Customer_Phone FROM cre_Drama_Workshop_Groups_Performers WHERE Customer_Name  =  \"Ashley\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Which status code is the most common of all the bookings?",
+  "gold_sql": "SELECT Status_Code FROM cre_Drama_Workshop_Groups_Bookings GROUP BY Status_Code ORDER BY count(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Which city is the address of the store named \"FJA Filming\" located in?",
+  "gold_sql": "SELECT T1.City_Town FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Stores AS T2 ON T1.Address_ID  =  T2.Address_ID WHERE T2.Store_Name  =  \"FJA Filming\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the most frequent status of bookings?",
+  "gold_sql": "SELECT Status_Code FROM cre_Drama_Workshop_Groups_Bookings GROUP BY Status_Code ORDER BY count(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show all payment method codes and the number of orders for each code.",
+  "gold_sql": "SELECT payment_method_code ,  count(*) FROM cre_Drama_Workshop_Groups_Invoices GROUP BY payment_method_code",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show all the Store_Name of drama workshop groups.",
+  "gold_sql": "SELECT Store_Name FROM cre_Drama_Workshop_Groups_Drama_Workshop_Groups",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Return the the names of the drama workshop groups that are located in Feliciaberg city.",
+  "gold_sql": "SELECT T2.Store_Name FROM cre_Drama_Workshop_Groups_Addresses AS T1 JOIN cre_Drama_Workshop_Groups_Drama_Workshop_Groups AS T2 ON T1.Address_ID  =  T2.Address_ID WHERE T1.City_Town  =  \"Feliciaberg\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What are the planned delivery date and actual delivery date for each booking?",
+  "gold_sql": "SELECT Planned_Delivery_Date ,  Actual_Delivery_Date FROM cre_Drama_Workshop_Groups_Bookings",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "How many bookings do we have?",
+  "gold_sql": "SELECT count(*) FROM cre_Drama_Workshop_Groups_Bookings",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "What is the name of the marketing region that the store Rob Dinning belongs to?",
+  "gold_sql": "SELECT T1.Marketing_Region_Name FROM cre_Drama_Workshop_Groups_Marketing_Regions AS T1 JOIN cre_Drama_Workshop_Groups_Stores AS T2 ON T1.Marketing_Region_Code  =  T2.Marketing_Region_Code WHERE T2.Store_Name  =  \"Rob Dinning\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Drama_Workshop_Groups"
+ },
+ {
+  "question": "Show the details of the top 3 most expensive hotels.",
+  "gold_sql": "SELECT other_hotel_details FROM cre_Theme_park_Hotels ORDER BY price_range DESC LIMIT 3",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions are visited at least twice? Give me their names and ids.",
+  "gold_sql": "SELECT T1.Name ,  T2.Tourist_Attraction_ID FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID GROUP BY T2.Tourist_Attraction_ID HAVING count(*)  >=  2",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the names and opening hours of the tourist attractions that we get to by bus or walk.",
+  "gold_sql": "SELECT Name ,  Opening_Hours FROM cre_Theme_park_Tourist_Attractions WHERE How_to_Get_There  =  \"bus\" OR How_to_Get_There  =  \"walk\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the names of the tourist attractions that is either accessible by bus or at address 254 Ottilie Junction.",
+  "gold_sql": "SELECT T2.Name FROM cre_Theme_park_Locations AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Location_ID  =  T2.Location_ID WHERE T1.Address  =  \"254 Ottilie Junction\" OR T2.How_to_Get_There  =  \"bus\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the price ranges of five star hotels?",
+  "gold_sql": "SELECT price_range FROM cre_Theme_park_Hotels WHERE star_rating_code  =  \"5\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the price ranges of hotels?",
+  "gold_sql": "SELECT price_range FROM cre_Theme_park_Hotels",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What is the name and detail of each staff member?",
+  "gold_sql": "SELECT Name ,  Other_Details FROM cre_Theme_park_Staff",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the average price range of hotels that have 5 star ratings and allow pets.",
+  "gold_sql": "SELECT avg(price_range) FROM cre_Theme_park_Hotels WHERE star_rating_code  =  \"5\" AND pets_allowed_yn  =  1",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions can we get to by bus? Tell me the names of the attractions.",
+  "gold_sql": "SELECT Name FROM cre_Theme_park_Tourist_Attractions WHERE How_to_Get_There  =  \"bus\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions does the visitor with detail 'Vincent' visit?",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID JOIN cre_Theme_park_Visitors AS T3 ON T2.Tourist_ID  =  T3.Tourist_ID WHERE T3.Tourist_Details  =  \"Vincent\"",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which transportation method is used the most often to get to tourist attractions?",
+  "gold_sql": "SELECT How_to_Get_There FROM cre_Theme_park_Tourist_Attractions GROUP BY How_to_Get_There ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the total number of available hotels.",
+  "gold_sql": "SELECT count(*) FROM cre_Theme_park_Hotels",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the id and star rating of each hotel, ordered by its price from low to high.",
+  "gold_sql": "SELECT hotel_id ,  star_rating_code FROM cre_Theme_park_Hotels ORDER BY price_range ASC",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "List all the possible ways to get to attractions, together with the number of attractions accessible by these methods.",
+  "gold_sql": "SELECT How_to_Get_There ,  COUNT(*) FROM cre_Theme_park_Tourist_Attractions GROUP BY How_to_Get_There",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What is the address of the location \"UK Gallery\"?",
+  "gold_sql": "SELECT Address FROM cre_Theme_park_Locations WHERE Location_Name  =  \"UK Gallery\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the details of the markets that can be accessed by walk or bus?",
+  "gold_sql": "SELECT T1.Market_Details FROM cre_Theme_park_Street_Markets AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Market_ID  =  T2.Tourist_Attraction_ID WHERE T2.How_to_Get_There  =  \"walk\" OR  T2.How_to_Get_There  =  \"bus\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the visit date and details of the visitor whose detail is 'Vincent'?",
+  "gold_sql": "SELECT T2.Visit_Date ,  T2.Visit_Details FROM cre_Theme_park_Visitors AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_ID  =  T2.Tourist_ID WHERE T1.Tourist_Details  =  \"Vincent\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions do the tourists Vincent and Marcelle visit? Tell me the names of the attractions.",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Vincent\" INTERSECT SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Marcelle\"",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the names of the tourist attractions that can be accessed by bus?",
+  "gold_sql": "SELECT Name FROM cre_Theme_park_Tourist_Attractions WHERE How_to_Get_There  =  \"bus\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Count the number of distinct names associated with the photos.",
+  "gold_sql": "SELECT count(DISTINCT Name) FROM cre_Theme_park_Photos",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Tell me the name of the staff in charge of the attraction called \"US museum\".",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Staff AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID WHERE T2.Name  =  \"US museum\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which tourist attractions are related to royal family? Tell me their details and how we can get there.",
+  "gold_sql": "SELECT T1.Royal_Family_Details ,  T2.How_to_Get_There FROM cre_Theme_park_Royal_Family AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Royal_Family_ID  =  T2.Tourist_Attraction_ID",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the id and star rating of each hotel and sort them in increasing order of price.",
+  "gold_sql": "SELECT hotel_id ,  star_rating_code FROM cre_Theme_park_Hotels ORDER BY price_range ASC",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What is the detail of each visitor?",
+  "gold_sql": "SELECT Tourist_Details FROM cre_Theme_park_Visitors",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "For each tourist attraction, return its name and the date when the tourists named Vincent or Vivian visited there.",
+  "gold_sql": "SELECT T1.Name ,  T3.Visit_Date FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Vincent\" OR T2.Tourist_Details  =  \"Vivian\"",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the visit date and details of the tourist whose detail is 'Vincent'",
+  "gold_sql": "SELECT T2.Visit_Date ,  T2.Visit_Details FROM cre_Theme_park_Visitors AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_ID  =  T2.Tourist_ID WHERE T1.Tourist_Details  =  \"Vincent\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Return the detail of the location named \"UK Gallery\".",
+  "gold_sql": "SELECT Other_Details FROM cre_Theme_park_Locations WHERE Location_Name  =  \"UK Gallery\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the details of all the markets that are accessible by walk or bus.",
+  "gold_sql": "SELECT T1.Market_Details FROM cre_Theme_park_Street_Markets AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Market_ID  =  T2.Tourist_Attraction_ID WHERE T2.How_to_Get_There  =  \"walk\" OR  T2.How_to_Get_There  =  \"bus\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the name, id and the corresponding number of visits for each  tourist attraction?",
+  "gold_sql": "SELECT T1.Name ,  T2.Tourist_Attraction_ID ,   COUNT(*) FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID GROUP BY T2.Tourist_Attraction_ID",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the names and ids of tourist attractions that are visited at least two times.",
+  "gold_sql": "SELECT T1.Name ,  T2.Tourist_Attraction_ID FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID GROUP BY T2.Tourist_Attraction_ID HAVING count(*)  >=  2",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Tell me the price ranges for all the hotels.",
+  "gold_sql": "SELECT price_range FROM cre_Theme_park_Hotels",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the transportation method most people choose to get to tourist attractions.",
+  "gold_sql": "SELECT How_to_Get_There FROM cre_Theme_park_Tourist_Attractions GROUP BY How_to_Get_There ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the tourist attractions visited by the tourist whose detail is 'Vincent'.",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visits AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID JOIN cre_Theme_park_Visitors AS T3 ON T2.Tourist_ID  =  T3.Tourist_ID WHERE T3.Tourist_Details  =  \"Vincent\"",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the names of the tourist attractions Vincent and Marcelle visit?",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Vincent\" INTERSECT SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Marcelle\"",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which attraction type does the most tourist attractions belong to? Tell me its  attraction type description and code.",
+  "gold_sql": "SELECT T1.Attraction_Type_Description ,  T2.Attraction_Type_Code FROM cre_Theme_park_Ref_Attraction_Types AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Attraction_Type_Code  =  T2.Attraction_Type_Code GROUP BY T2.Attraction_Type_Code ORDER BY COUNT(*) DESC LIMIT 1",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the names and descriptions of the photos taken at the tourist attraction called \"film festival\".",
+  "gold_sql": "SELECT T1.Name ,  T1.Description FROM cre_Theme_park_Photos AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID WHERE T2.Name  =  \"film festival\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the details of the three most expensive hotels?",
+  "gold_sql": "SELECT other_hotel_details FROM cre_Theme_park_Hotels ORDER BY price_range DESC LIMIT 3",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the names of the tourist attractions that is either accessible by walk or at address 660 Shea Crescent.",
+  "gold_sql": "SELECT T2.Name FROM cre_Theme_park_Locations AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Location_ID  =  T2.Location_ID WHERE T1.Address  =  \"660 Shea Crescent\" OR T2.How_to_Get_There  =  \"walk\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find all the locations whose names contain the word \"film\".",
+  "gold_sql": "SELECT Location_Name FROM cre_Theme_park_Locations WHERE Location_Name LIKE \"%film%\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "How many tourists did not make any visit?",
+  "gold_sql": "SELECT count(*) FROM cre_Theme_park_Visitors WHERE Tourist_ID NOT IN ( SELECT Tourist_ID FROM cre_Theme_park_Visits )",
+  "db_id": "merged_50",
+  "difficulty": "hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the star rating descriptions of the hotels with price above 10000?",
+  "gold_sql": "SELECT T2.star_rating_description FROM cre_Theme_park_Hotels AS T1 JOIN cre_Theme_park_Ref_Hotel_Star_Ratings AS T2 ON T1.star_rating_code  =  T2.star_rating_code WHERE T1.price_range  >  10000",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the tourist attractions that have parking or shopping as their feature details. What are the names of the attractions?",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Tourist_Attraction_Features AS T2 ON T1.tourist_attraction_id  =  T2.tourist_attraction_id JOIN cre_Theme_park_Features AS T3 ON T2.Feature_ID  =  T3.Feature_ID WHERE T3.feature_Details  =  'park' UNION SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Tourist_Attraction_Features AS T2 ON T1.tourist_attraction_id  =  T2.tourist_attraction_id JOIN cre_Theme_park_Features AS T3 ON T2.Feature_ID  =  T3.Feature_ID WHERE T3.feature_Details  =  'shopping'",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Which location names contain the word \"film\"?",
+  "gold_sql": "SELECT Location_Name FROM cre_Theme_park_Locations WHERE Location_Name LIKE \"%film%\"",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find all the distinct visit dates.",
+  "gold_sql": "SELECT DISTINCT Visit_Date FROM cre_Theme_park_Visits",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Find the the names of the tourist attractions that the tourist named Alison visited but Rosalind did not visit.",
+  "gold_sql": "SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Alison\" EXCEPT SELECT T1.Name FROM cre_Theme_park_Tourist_Attractions AS T1 JOIN cre_Theme_park_Visitors AS T2 JOIN cre_Theme_park_Visits AS T3 ON T1.Tourist_Attraction_ID  =  T3.Tourist_Attraction_ID AND T2.Tourist_ID  =  T3.Tourist_ID WHERE T2.Tourist_Details  =  \"Rosalind\"",
+  "db_id": "merged_50",
+  "difficulty": "extra hard",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show the average price of hotels for different pet policy.",
+  "gold_sql": "SELECT pets_allowed_yn ,  avg(price_range) FROM cre_Theme_park_Hotels GROUP BY pets_allowed_yn",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What are the distinct visit dates?",
+  "gold_sql": "SELECT DISTINCT Visit_Date FROM cre_Theme_park_Visits",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show details of all visitors.",
+  "gold_sql": "SELECT Tourist_Details FROM cre_Theme_park_Visitors",
+  "db_id": "merged_50",
+  "difficulty": "easy",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "Show different ways to get to attractions and the number of attractions that can be accessed in the corresponding way.",
+  "gold_sql": "SELECT How_to_Get_There ,  COUNT(*) FROM cre_Theme_park_Tourist_Attractions GROUP BY How_to_Get_There",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ },
+ {
+  "question": "What is the name of the tourist attraction that is associated with the photo \"game1\"?",
+  "gold_sql": "SELECT T2.Name FROM cre_Theme_park_Photos AS T1 JOIN cre_Theme_park_Tourist_Attractions AS T2 ON T1.Tourist_Attraction_ID  =  T2.Tourist_Attraction_ID WHERE T1.Name  =  \"game1\"",
+  "db_id": "merged_50",
+  "difficulty": "medium",
+  "source_db": "cre_Theme_park"
+ }
+]

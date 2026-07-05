@@ -1,0 +1,97 @@
+{
+ "source": "questions_50.json",
+ "repaired": [
+  {
+   "index": 2,
+   "question": "What were all the salary values of players in 2010 and 2001?",
+   "old": "SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2010 UNION SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2001",
+   "new": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2010 UNION SELECT salary FROM baseball_1_salary WHERE YEAR = 2001",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 5,
+   "question": "List the 3 highest salaries of the players in 2001?",
+   "old": "SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2001 ORDER BY baseball_1_salary DESC LIMIT 3;",
+   "new": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2001 ORDER BY salary DESC LIMIT 3",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 7,
+   "question": "Which team offers the lowest average salary? Give me the name and id of the team.",
+   "old": "SELECT T1.name ,  T1.team_id FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id ORDER BY avg(T2.baseball_1_salary) ASC LIMIT 1;",
+   "new": "SELECT T1.name, T1.team_id FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id ORDER BY AVG(T2.salary) ASC LIMIT 1",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 12,
+   "question": "What is the total salary expenses of team Boston Red Stockings in 2010?",
+   "old": "SELECT sum(T1.baseball_1_salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings' AND T1.year  =  2010",
+   "new": "SELECT SUM(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings' AND T1.year = 2010",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 14,
+   "question": "Compute the average salary of the players in the team called 'Boston Red Stockings'.",
+   "old": "SELECT avg(T1.baseball_1_salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings'",
+   "new": "SELECT AVG(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings'",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 22,
+   "question": "How much salary did the top 3 well-paid players get in 2001?",
+   "old": "SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2001 ORDER BY baseball_1_salary DESC LIMIT 3;",
+   "new": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2001 ORDER BY salary DESC LIMIT 3",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 23,
+   "question": "For each team, return the team name, id and the maximum salary among the team.",
+   "old": "SELECT T1.name ,  T1.team_id ,  max(T2.baseball_1_salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id  =  T2.team_id GROUP BY T1.team_id;",
+   "new": "SELECT T1.name, T1.team_id, MAX(T2.salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 40,
+   "question": "What is the highest salary among each team? List the team name, id and maximum salary.",
+   "old": "SELECT T1.name ,  T1.team_id ,  max(T2.baseball_1_salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id  =  T2.team_id GROUP BY T1.team_id;",
+   "new": "SELECT T1.name, T1.team_id, MAX(T2.salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  }
+ ],
+ "removed_unanswerable": [],
+ "unfixable": [],
+ "empty_result_warnings": [
+  {
+   "index": 59,
+   "question": "Find the order detail for the products with price above 2000."
+  },
+  {
+   "index": 100,
+   "question": "Show the details of the top 3 most expensive hotels."
+  },
+  {
+   "index": 126,
+   "question": "Return the detail of the location named \"UK Gallery\"."
+  },
+  {
+   "index": 136,
+   "question": "What are the details of the three most expensive hotels?"
+  }
+ ]
+}

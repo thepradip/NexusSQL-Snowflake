@@ -1,0 +1,528 @@
+{
+ "source": "questions_200.json",
+ "repaired": [
+  {
+   "index": 151,
+   "question": "How many cities are in Australia?",
+   "old": "SELECT count(*) FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id  =  T2.country_id WHERE T2.sakila_1_country  =  'Australia'",
+   "new": "SELECT COUNT(*) FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id = T2.country_id WHERE T2.country = 'Australia'",
+   "fixes": [
+    "column sakila_1_country -> country"
+   ]
+  },
+  {
+   "index": 155,
+   "question": "Give the address of the staff member who has the first name Elsa.",
+   "old": "SELECT T2.sakila_1_address FROM sakila_1_staff AS T1 JOIN sakila_1_address AS T2 ON T1.address_id  =  T2.address_id WHERE T1.first_name  =  'Elsa'",
+   "new": "SELECT T2.address FROM sakila_1_staff AS T1 JOIN sakila_1_address AS T2 ON T1.address_id = T2.address_id WHERE T1.first_name = 'Elsa'",
+   "fixes": [
+    "column sakila_1_address -> address"
+   ]
+  },
+  {
+   "index": 158,
+   "question": "Which city has the most addresses? List the city name, number of addresses, and city id.",
+   "old": "SELECT T2.sakila_1_city ,  count(*) ,  T1.city_id FROM sakila_1_address AS T1 JOIN sakila_1_city AS T2 ON T1.city_id  =  T2.city_id GROUP BY T1.city_id ORDER BY count(*) DESC LIMIT 1",
+   "new": "SELECT T2.city, COUNT(*), T1.city_id FROM sakila_1_address AS T1 JOIN sakila_1_city AS T2 ON T1.city_id = T2.city_id GROUP BY T1.city_id ORDER BY COUNT(*) DESC LIMIT 1",
+   "fixes": [
+    "column sakila_1_city -> city"
+   ]
+  },
+  {
+   "index": 175,
+   "question": "Count the number of cities in Australia.",
+   "old": "SELECT count(*) FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id  =  T2.country_id WHERE T2.sakila_1_country  =  'Australia'",
+   "new": "SELECT COUNT(*) FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id = T2.country_id WHERE T2.country = 'Australia'",
+   "fixes": [
+    "column sakila_1_country -> country"
+   ]
+  },
+  {
+   "index": 176,
+   "question": "What are the city name, id, and number of addresses corresponding to the city with the most addressed?",
+   "old": "SELECT T2.sakila_1_city ,  count(*) ,  T1.city_id FROM sakila_1_address AS T1 JOIN sakila_1_city AS T2 ON T1.city_id  =  T2.city_id GROUP BY T1.city_id ORDER BY count(*) DESC LIMIT 1",
+   "new": "SELECT T2.city, COUNT(*), T1.city_id FROM sakila_1_address AS T1 JOIN sakila_1_city AS T2 ON T1.city_id = T2.city_id GROUP BY T1.city_id ORDER BY COUNT(*) DESC LIMIT 1",
+   "fixes": [
+    "column sakila_1_city -> city"
+   ]
+  },
+  {
+   "index": 181,
+   "question": "Give the phone and postal code corresponding to the address '1031 Daugavpils Parkway'.",
+   "old": "SELECT phone ,  postal_code FROM sakila_1_address WHERE sakila_1_address  =  '1031 Daugavpils Parkway'",
+   "new": "SELECT phone, postal_code FROM sakila_1_address WHERE address = '1031 Daugavpils Parkway'",
+   "fixes": [
+    "column sakila_1_address -> address"
+   ]
+  },
+  {
+   "index": 183,
+   "question": "Return the address and email of the customer with the first name Linda.",
+   "old": "SELECT T2.sakila_1_address ,  T1.email FROM sakila_1_customer AS T1 JOIN sakila_1_address AS T2 ON T2.address_id  =  T1.address_id WHERE T1.first_name  =  'LINDA'",
+   "new": "SELECT T2.address, T1.email FROM sakila_1_customer AS T1 JOIN sakila_1_address AS T2 ON T2.address_id = T1.address_id WHERE T1.first_name = 'LINDA'",
+   "fixes": [
+    "column sakila_1_address -> address"
+   ]
+  },
+  {
+   "index": 184,
+   "question": "Where does the staff member with the first name Elsa live?",
+   "old": "SELECT T2.sakila_1_address FROM sakila_1_staff AS T1 JOIN sakila_1_address AS T2 ON T1.address_id  =  T2.address_id WHERE T1.first_name  =  'Elsa'",
+   "new": "SELECT T2.address FROM sakila_1_staff AS T1 JOIN sakila_1_address AS T2 ON T1.address_id = T2.address_id WHERE T1.first_name = 'Elsa'",
+   "fixes": [
+    "column sakila_1_address -> address"
+   ]
+  },
+  {
+   "index": 188,
+   "question": "Which countries have at least 3 cities?",
+   "old": "SELECT T2.sakila_1_country FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id  =  T2.country_id GROUP BY T2.country_id HAVING count(*)  >=  3",
+   "new": "SELECT T2.country FROM sakila_1_city AS T1 JOIN sakila_1_country AS T2 ON T1.country_id = T2.country_id GROUP BY T2.country_id HAVING COUNT(*) >= 3",
+   "fixes": [
+    "column sakila_1_country -> country"
+   ]
+  },
+  {
+   "index": 189,
+   "question": "Where is store 1 located?",
+   "old": "SELECT T2.sakila_1_address FROM sakila_1_store AS T1 JOIN sakila_1_address AS T2 ON T1.address_id  =  T2.address_id WHERE store_id  =  1",
+   "new": "SELECT T2.address FROM sakila_1_store AS T1 JOIN sakila_1_address AS T2 ON T1.address_id = T2.address_id WHERE store_id = 1",
+   "fixes": [
+    "column sakila_1_address -> address"
+   ]
+  },
+  {
+   "index": 237,
+   "question": "What are the name and id of the team offering the lowest average salary?",
+   "old": "SELECT T1.name ,  T1.team_id FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id ORDER BY avg(T2.baseball_1_salary) ASC LIMIT 1;",
+   "new": "SELECT T1.name, T1.team_id FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id ORDER BY AVG(T2.salary) ASC LIMIT 1",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 239,
+   "question": "List the 3 highest salaries of the players in 2001?",
+   "old": "SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2001 ORDER BY baseball_1_salary DESC LIMIT 3;",
+   "new": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2001 ORDER BY salary DESC LIMIT 3",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 245,
+   "question": "What were all the salary values of players in 2010 and 2001?",
+   "old": "SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2010 UNION SELECT baseball_1_salary FROM baseball_1_salary WHERE YEAR  =  2001",
+   "new": "SELECT salary FROM baseball_1_salary WHERE YEAR = 2010 UNION SELECT salary FROM baseball_1_salary WHERE YEAR = 2001",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 256,
+   "question": "Compute the average salary of the players in the team called 'Boston Red Stockings'.",
+   "old": "SELECT avg(T1.baseball_1_salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings'",
+   "new": "SELECT AVG(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings'",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 265,
+   "question": "For each team, return the team name, id and the maximum salary among the team.",
+   "old": "SELECT T1.name ,  T1.team_id ,  max(T2.baseball_1_salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id  =  T2.team_id GROUP BY T1.team_id;",
+   "new": "SELECT T1.name, T1.team_id, MAX(T2.salary) FROM baseball_1_team AS T1 JOIN baseball_1_salary AS T2 ON T1.team_id = T2.team_id GROUP BY T1.team_id",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 268,
+   "question": "What is average salary of the players in the team named 'Boston Red Stockings' ?",
+   "old": "SELECT avg(T1.baseball_1_salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id  =  T2.team_id_br WHERE T2.name  = 'Boston Red Stockings'",
+   "new": "SELECT AVG(T1.salary) FROM baseball_1_salary AS T1 JOIN baseball_1_team AS T2 ON T1.team_id = T2.team_id_br WHERE T2.name = 'Boston Red Stockings'",
+   "fixes": [
+    "column baseball_1_salary -> salary"
+   ]
+  },
+  {
+   "index": 280,
+   "question": "Find the names of all patients who have an undergoing treatment and are staying in room 111.",
+   "old": "SELECT DISTINCT T2.name FROM hospital_1_Undergoes AS T1 JOIN hospital_1_Patient AS T2 ON T1.hospital_1_Patient = T2.SSN JOIN hospital_1_Stay AS T3 ON T1.hospital_1_Stay  =  T3.StayID WHERE T3.hospital_1_Room  =  111",
+   "new": "SELECT DISTINCT T2.name FROM hospital_1_Undergoes AS T1 JOIN hospital_1_Patient AS T2 ON T1.Patient = T2.SSN JOIN hospital_1_Stay AS T3 ON T1.Stay = T3.StayID WHERE T3.Room = 111",
+   "fixes": [
+    "column hospital_1_Room -> Room",
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Stay -> Stay"
+   ]
+  },
+  {
+   "index": 281,
+   "question": "Find the number of medications prescribed for each brand.",
+   "old": "SELECT count(*) ,  T1.name FROM hospital_1_Medication AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.code = T2.hospital_1_Medication GROUP BY T1.brand",
+   "new": "SELECT COUNT(*), T1.name FROM hospital_1_Medication AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.code = T2.Medication GROUP BY T1.brand",
+   "fixes": [
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 282,
+   "question": "What procedures cost less than 5000 and have John Wen as a trained physician?",
+   "old": "SELECT name FROM hospital_1_Procedures WHERE cost  <  5000 INTERSECT SELECT T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment WHERE T1.name  =  \"John Wen\"",
+   "new": "SELECT name FROM hospital_1_Procedures WHERE cost < 5000 INTERSECT SELECT T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment WHERE T1.name = \"John Wen\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 284,
+   "question": "Find the name of physicians who are affiliated with Surgery or Psychiatry department.",
+   "old": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID  =  T2.hospital_1_Physician JOIN hospital_1_Department AS T3 ON T2.hospital_1_Department  =  T3.DepartmentID WHERE T3.name  =  'Surgery' OR T3.name  =  'Psychiatry'",
+   "new": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.Physician JOIN hospital_1_Department AS T3 ON T2.Department = T3.DepartmentID WHERE T3.name = 'Surgery' OR T3.name = 'Psychiatry'",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 285,
+   "question": "Compute the mean price of procedures physician John Wen was trained in.",
+   "old": "SELECT avg(T3.cost) FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment WHERE T1.name  =  \"John Wen\"",
+   "new": "SELECT AVG(T3.cost) FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment WHERE T1.name = \"John Wen\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 289,
+   "question": "Which physicians have never taken any appointment? Find their names.",
+   "old": "SELECT name FROM hospital_1_Physician EXCEPT SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.hospital_1_Physician  =  T2.EmployeeID",
+   "new": "SELECT name FROM hospital_1_Physician EXCEPT SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.Physician = T2.EmployeeID",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 294,
+   "question": "Find the physician who was trained in the most expensive procedure?",
+   "old": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment ORDER BY T3.cost DESC LIMIT 1",
+   "new": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment ORDER BY T3.cost DESC LIMIT 1",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 295,
+   "question": "List the names of all the physicians who prescribe Thesisin as medication.",
+   "old": "SELECT DISTINCT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.employeeid = T2.hospital_1_Physician JOIN hospital_1_Medication AS T3 ON T3.code = T2.hospital_1_Medication WHERE T3.name  =  \"Thesisin\"",
+   "new": "SELECT DISTINCT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Medication AS T3 ON T3.code = T2.Medication WHERE T3.name = \"Thesisin\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 296,
+   "question": "What are the name and primarily affiliated department name of each physician?",
+   "old": "SELECT T1.name ,  T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID  =  T2.hospital_1_Physician JOIN hospital_1_Department AS T3 ON T2.hospital_1_Department  =  T3.DepartmentID WHERE T2.PrimaryAffiliation  =  1",
+   "new": "SELECT T1.name, T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.Physician JOIN hospital_1_Department AS T3 ON T2.Department = T3.DepartmentID WHERE T2.PrimaryAffiliation = 1",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 298,
+   "question": "Find the patient who most recently stayed in room 111.",
+   "old": "SELECT hospital_1_Patient FROM hospital_1_Stay WHERE hospital_1_Room  =  111 ORDER BY staystart DESC LIMIT 1",
+   "new": "SELECT Patient FROM hospital_1_Stay WHERE Room = 111 ORDER BY staystart DESC LIMIT 1",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Room -> Room"
+   ]
+  },
+  {
+   "index": 299,
+   "question": "What is the id of the patient who stayed in room 111 most recently?",
+   "old": "SELECT hospital_1_Patient FROM hospital_1_Stay WHERE hospital_1_Room  =  111 ORDER BY staystart DESC LIMIT 1",
+   "new": "SELECT Patient FROM hospital_1_Stay WHERE Room = 111 ORDER BY staystart DESC LIMIT 1",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Room -> Room"
+   ]
+  },
+  {
+   "index": 302,
+   "question": "List the name of physicians who never took any appointment.",
+   "old": "SELECT name FROM hospital_1_Physician EXCEPT SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.hospital_1_Physician  =  T2.EmployeeID",
+   "new": "SELECT name FROM hospital_1_Physician EXCEPT SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.Physician = T2.EmployeeID",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 303,
+   "question": "How many patients are not using Procrastin-X as medication?",
+   "old": "SELECT count(*) FROM hospital_1_Patient WHERE SSN NOT IN ( SELECT T1.hospital_1_Patient FROM hospital_1_Prescribes AS T1 JOIN hospital_1_Medication AS T2 ON T1.hospital_1_Medication  =  T2.Code WHERE T2.name  =  'Procrastin-X' )",
+   "new": "SELECT COUNT(*) FROM hospital_1_Patient WHERE NOT SSN IN (SELECT T1.Patient FROM hospital_1_Prescribes AS T1 JOIN hospital_1_Medication AS T2 ON T1.Medication = T2.Code WHERE T2.name = 'Procrastin-X')",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 304,
+   "question": "List the names of departments where some physicians are primarily affiliated with.",
+   "old": "SELECT DISTINCT T2.name FROM hospital_1_Affiliated_With AS T1 JOIN hospital_1_Department AS T2 ON T1.hospital_1_Department = T2.departmentid WHERE PrimaryAffiliation  =  1",
+   "new": "SELECT DISTINCT T2.name FROM hospital_1_Affiliated_With AS T1 JOIN hospital_1_Department AS T2 ON T1.Department = T2.departmentid WHERE PrimaryAffiliation = 1",
+   "fixes": [
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 306,
+   "question": "Find the patient who has the most recent undergoing treatment?",
+   "old": "SELECT hospital_1_Patient FROM hospital_1_Undergoes ORDER BY dateundergoes LIMIT 1",
+   "new": "SELECT Patient FROM hospital_1_Undergoes ORDER BY dateundergoes LIMIT 1",
+   "fixes": [
+    "column hospital_1_Patient -> Patient"
+   ]
+  },
+  {
+   "index": 308,
+   "question": "Find the names of all physicians and their primary affiliated departments' names.",
+   "old": "SELECT T1.name ,  T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID  =  T2.hospital_1_Physician JOIN hospital_1_Department AS T3 ON T2.hospital_1_Department  =  T3.DepartmentID WHERE T2.PrimaryAffiliation  =  1",
+   "new": "SELECT T1.name, T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.Physician JOIN hospital_1_Department AS T3 ON T2.Department = T3.DepartmentID WHERE T2.PrimaryAffiliation = 1",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 309,
+   "question": "What is the names of the physicians who prescribe medication Thesisin?",
+   "old": "SELECT DISTINCT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.employeeid = T2.hospital_1_Physician JOIN hospital_1_Medication AS T3 ON T3.code = T2.hospital_1_Medication WHERE T3.name  =  \"Thesisin\"",
+   "new": "SELECT DISTINCT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Medication AS T3 ON T3.code = T2.Medication WHERE T3.name = \"Thesisin\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 310,
+   "question": "What are the names of procedures physician John Wen was trained in?",
+   "old": "SELECT T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment WHERE T1.name  =  \"John Wen\"",
+   "new": "SELECT T3.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment WHERE T1.name = \"John Wen\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 311,
+   "question": "Count the number of patients who stayed in room 112.",
+   "old": "SELECT count(hospital_1_Patient) FROM hospital_1_Stay WHERE hospital_1_Room  =  112",
+   "new": "SELECT COUNT(Patient) FROM hospital_1_Stay WHERE Room = 112",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Room -> Room"
+   ]
+  },
+  {
+   "index": 312,
+   "question": "What are names of patients who made an appointment?",
+   "old": "SELECT name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Patient AS T2 ON T1.hospital_1_Patient  =  T2.ssn",
+   "new": "SELECT name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Patient AS T2 ON T1.Patient = T2.ssn",
+   "fixes": [
+    "column hospital_1_Patient -> Patient"
+   ]
+  },
+  {
+   "index": 313,
+   "question": "Which patient is undergoing the most recent treatment?",
+   "old": "SELECT hospital_1_Patient FROM hospital_1_Undergoes ORDER BY dateundergoes LIMIT 1",
+   "new": "SELECT Patient FROM hospital_1_Undergoes ORDER BY dateundergoes LIMIT 1",
+   "fixes": [
+    "column hospital_1_Patient -> Patient"
+   ]
+  },
+  {
+   "index": 314,
+   "question": "What are the distinct names of nurses on call?",
+   "old": "SELECT DISTINCT T1.name FROM hospital_1_Nurse AS T1 JOIN hospital_1_On_Call AS T2 ON T1.EmployeeID  =  T2.hospital_1_Nurse",
+   "new": "SELECT DISTINCT T1.name FROM hospital_1_Nurse AS T1 JOIN hospital_1_On_Call AS T2 ON T1.EmployeeID = T2.Nurse",
+   "fixes": [
+    "column hospital_1_Nurse -> Nurse"
+   ]
+  },
+  {
+   "index": 315,
+   "question": "Find the number of patients who are not using the medication of Procrastin-X.",
+   "old": "SELECT count(*) FROM hospital_1_Patient WHERE SSN NOT IN ( SELECT T1.hospital_1_Patient FROM hospital_1_Prescribes AS T1 JOIN hospital_1_Medication AS T2 ON T1.hospital_1_Medication  =  T2.Code WHERE T2.name  =  'Procrastin-X' )",
+   "new": "SELECT COUNT(*) FROM hospital_1_Patient WHERE NOT SSN IN (SELECT T1.Patient FROM hospital_1_Prescribes AS T1 JOIN hospital_1_Medication AS T2 ON T1.Medication = T2.Code WHERE T2.name = 'Procrastin-X')",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 316,
+   "question": "How many medications are prescribed for each brand?",
+   "old": "SELECT count(*) ,  T1.name FROM hospital_1_Medication AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.code = T2.hospital_1_Medication GROUP BY T1.brand",
+   "new": "SELECT COUNT(*), T1.name FROM hospital_1_Medication AS T1 JOIN hospital_1_Prescribes AS T2 ON T1.code = T2.Medication GROUP BY T1.brand",
+   "fixes": [
+    "column hospital_1_Medication -> Medication"
+   ]
+  },
+  {
+   "index": 317,
+   "question": "Which physicians are affiliated with either Surgery or Psychiatry department? Give me their names.",
+   "old": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID  =  T2.hospital_1_Physician JOIN hospital_1_Department AS T3 ON T2.hospital_1_Department  =  T3.DepartmentID WHERE T3.name  =  'Surgery' OR T3.name  =  'Psychiatry'",
+   "new": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Affiliated_With AS T2 ON T1.EmployeeID = T2.Physician JOIN hospital_1_Department AS T3 ON T2.Department = T3.DepartmentID WHERE T3.name = 'Surgery' OR T3.name = 'Psychiatry'",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 318,
+   "question": "How many patients stay in room 112?",
+   "old": "SELECT count(hospital_1_Patient) FROM hospital_1_Stay WHERE hospital_1_Room  =  112",
+   "new": "SELECT COUNT(Patient) FROM hospital_1_Stay WHERE Room = 112",
+   "fixes": [
+    "column hospital_1_Patient -> Patient",
+    "column hospital_1_Room -> Room"
+   ]
+  },
+  {
+   "index": 319,
+   "question": "List the name of physicians who took some appointment.",
+   "old": "SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.hospital_1_Physician  =  T2.EmployeeID",
+   "new": "SELECT T2.name FROM hospital_1_Appointment AS T1 JOIN hospital_1_Physician AS T2 ON T1.Physician = T2.EmployeeID",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 322,
+   "question": "Which physicians are trained in procedures that are more expensive than 5000?",
+   "old": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment WHERE T3.cost  >  5000",
+   "new": "SELECT T1.name FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment WHERE T3.cost > 5000",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 323,
+   "question": "Find the names of nurses who are on call.",
+   "old": "SELECT DISTINCT T1.name FROM hospital_1_Nurse AS T1 JOIN hospital_1_On_Call AS T2 ON T1.EmployeeID  =  T2.hospital_1_Nurse",
+   "new": "SELECT DISTINCT T1.name FROM hospital_1_Nurse AS T1 JOIN hospital_1_On_Call AS T2 ON T1.EmployeeID = T2.Nurse",
+   "fixes": [
+    "column hospital_1_Nurse -> Nurse"
+   ]
+  },
+  {
+   "index": 325,
+   "question": "What is the average cost of procedures that physician John Wen was trained in?",
+   "old": "SELECT avg(T3.cost) FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid  =  T2.hospital_1_Physician JOIN hospital_1_Procedures AS T3 ON T3.code  =  T2.treatment WHERE T1.name  =  \"John Wen\"",
+   "new": "SELECT AVG(T3.cost) FROM hospital_1_Physician AS T1 JOIN hospital_1_Trained_In AS T2 ON T1.employeeid = T2.Physician JOIN hospital_1_Procedures AS T3 ON T3.code = T2.treatment WHERE T1.name = \"John Wen\"",
+   "fixes": [
+    "column hospital_1_Physician -> Physician"
+   ]
+  },
+  {
+   "index": 327,
+   "question": "List the physicians' employee ids together with their primary affiliation departments' ids.",
+   "old": "SELECT hospital_1_Physician ,  hospital_1_Department FROM hospital_1_Affiliated_With WHERE primaryaffiliation  =  1",
+   "new": "SELECT Physician, Department FROM hospital_1_Affiliated_With WHERE primaryaffiliation = 1",
+   "fixes": [
+    "column hospital_1_Physician -> Physician",
+    "column hospital_1_Department -> Department"
+   ]
+  },
+  {
+   "index": 328,
+   "question": "What nurses are on call with block floor 1 and block code 1? Tell me their names.",
+   "old": "SELECT hospital_1_Nurse FROM hospital_1_On_Call WHERE blockfloor  =  1 AND blockcode  =  1",
+   "new": "SELECT Nurse FROM hospital_1_On_Call WHERE blockfloor = 1 AND blockcode = 1",
+   "fixes": [
+    "column hospital_1_Nurse -> Nurse"
+   ]
+  }
+ ],
+ "removed_unanswerable": [
+  {
+   "index": 214,
+   "question": "What is the description of the type of the company who concluded its contracts most recently?",
+   "gold_sql": "SELECT T1.company_name FROM assets_maintenance_Third_Party_Companies AS T1 JOIN assets_maintenance_Maintenance_Contracts AS T2 ON T1.company_id  =  T2.maintenance_contract_company_id JOIN Ref_Company_Types AS T3 ON T1.company_type_code  =  T3.company_type_code ORDER BY T2.contract_end_date DESC LIMIT 1",
+   "error": "UNANSWERABLE: table Ref_Company_Types not in merged DB",
+   "partial_fixes": []
+  }
+ ],
+ "unfixable": [],
+ "empty_result_warnings": [
+  {
+   "index": 5,
+   "question": "Find the name of tracks which are in both Movies and music playlists."
+  },
+  {
+   "index": 26,
+   "question": "What are the names of all tracks that are on playlists titled Movies?"
+  },
+  {
+   "index": 46,
+   "question": "What are the names of all tracks that are on the Movies playlist but not in the music playlist?"
+  },
+  {
+   "index": 90,
+   "question": "What are the drivers' last names and id who had 11 pit stops and participated in more than 5 race results?"
+  },
+  {
+   "index": 91,
+   "question": "What is the forename and surname of the driver with the shortest laptime?"
+  },
+  {
+   "index": 93,
+   "question": "Find all the distinct id and nationality of drivers who have had laptime more than 100000 milliseconds?"
+  },
+  {
+   "index": 94,
+   "question": "What are the forename and surname of the driver who has the smallest laptime?"
+  },
+  {
+   "index": 98,
+   "question": "What is the id and stop number for each driver that has a shorter pit stop than the driver in the race with id 841?"
+  },
+  {
+   "index": 117,
+   "question": "Find the distinct driver id of all drivers that have a longer stop duration than some drivers in the race whose id is 841?"
+  },
+  {
+   "index": 121,
+   "question": "What are the different ids and stop durations of all the drivers whose stop lasted longer than the driver in the race with the id 841?"
+  },
+  {
+   "index": 155,
+   "question": "Give the address of the staff member who has the first name Elsa."
+  },
+  {
+   "index": 184,
+   "question": "Where does the staff member with the first name Elsa live?"
+  },
+  {
+   "index": 189,
+   "question": "Where is store 1 located?"
+  },
+  {
+   "index": 442,
+   "question": "What is id of the staff who had a Staff Department Assignment earlier than any Clerical Staff?"
+  },
+  {
+   "index": 500,
+   "question": "What are the order details of the products with price higher than 2000?"
+  },
+  {
+   "index": 506,
+   "question": "Find the order detail for the products with price above 2000."
+  }
+ ]
+}
