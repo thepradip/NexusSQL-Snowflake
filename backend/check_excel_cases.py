@@ -13,8 +13,8 @@ Failure sources:
   Pratiksha — duplicate count from ambiguous join
 
 Usage:
-    cd backend && python test_excel_cases.py
-    cd backend && python test_excel_cases.py --verbose
+    cd backend && python check_excel_cases.py
+    cd backend && python check_excel_cases.py --verbose
 """
 
 import os

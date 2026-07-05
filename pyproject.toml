@@ -44,6 +44,9 @@ Documentation = "https://github.com/thepradip/SQLAS#readme"
 Repository = "https://github.com/thepradip/SQLAS"
 Changelog = "https://github.com/thepradip/SQLAS/blob/main/CHANGELOG.md"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.setuptools.packages.find]
 include = ["sqlas*"]
 

@@ -3,8 +3,8 @@ Unit tests for the 5 production improvements.
 No LLM calls — all tests are deterministic and run in <2s.
 
 Usage:
-    cd backend && python test_improvements.py
-    cd backend && python test_improvements.py --verbose
+    cd backend && python check_improvements.py
+    cd backend && python check_improvements.py --verbose
 """
 
 import ast
