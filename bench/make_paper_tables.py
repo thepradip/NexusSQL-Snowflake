@@ -7,7 +7,7 @@ same inputs -> byte-identical outputs (everything is sorted, no timestamps).
 
 Inputs (all CITABLE per bench/RESULTS_INDEX.md):
   bench/results_bird_gpt55_full_dev.scored.csv   (1,534 rows, BIRD full dev)
-  bench/results_ablation_100.csv                 (1,120 rows, 4 modes x 280q, 107 tables)
+  bench/results_ablation_100.csv                 (1,120 rows, 4 modes x 280q, 105 tables)
   bench/results_ablation_500.csv                 (1,440 rows, 4 modes x 360q, 502 tables)
   results_v2_full_judged.csv                     (100 rows, LLM-judged)
   bench/results_repeat_full_r{1,2,3}.csv         (280 rows each; table skipped until complete)
@@ -35,7 +35,7 @@ OUT_DIR = ROOT / "paper_tables"
 
 BIRD_CSV = BENCH / "results_bird_gpt55_full_dev.scored.csv"
 ABLATION_CSVS = {
-    107: BENCH / "results_ablation_100.csv",
+    105: BENCH / "results_ablation_100.csv",
     502: BENCH / "results_ablation_500.csv",
 }
 JUDGED_CSV = ROOT / "results_v2_full_judged.csv"
@@ -401,7 +401,7 @@ def generate(out_dir):
 
     counts = {
         "bench/results_bird_gpt55_full_dev.scored.csv": len(bird),
-        "bench/results_ablation_100.csv": len(rows_by_scale[107]),
+        "bench/results_ablation_100.csv": len(rows_by_scale[105]),
         "bench/results_ablation_500.csv": len(rows_by_scale[502]),
         "results_v2_full_judged.csv": len(judged),
     }

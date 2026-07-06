@@ -9,7 +9,7 @@ were recomputed from the files, not copied from prior reports.)
 
 | File | Rows | Config | Headline metric | CITABLE | Notes |
 |---|---|---|---|---|---|
-| `../results_100.csv` | 1,200 | 4 retrieval modes × 300q, merged_100 (107 tables) | mean exec_acc 0.663 | partial | exec_acc / latency / schema-F1 / safety columns OK. `verdict`+`quality_score` NOT LLM-judged (structural proxy ≤0.23 → all FAIL_QUALITY). Gold set has 48/281 broken queries → re-run planned on merged_100_v2 |
+| `../results_100.csv` | 1,200 | 4 retrieval modes × 300q, merged_100 (105 tables — the old '107' figure was wrong; sqlite_master and summary_100.json both say 105) | mean exec_acc 0.663 | partial | exec_acc / latency / schema-F1 / safety columns OK. `verdict`+`quality_score` NOT LLM-judged (structural proxy ≤0.23 → all FAIL_QUALITY). Gold set has 48/281 broken queries → re-run planned on merged_100_v2 |
 | `../results_200.csv` | 2,248 | 4 retrieval modes × 562q, merged_200 (202 tables) | mean exec_acc 0.679 | partial | same caveats as results_100.csv |
 | `../results_full_schema_injection_200.csv` | 200 | full-schema-injection baseline, 200 tables | exec_acc 0.827 | yes | the valid FSI baseline |
 | `archive/INVALID_results_full_schema_200.csv` | 200 | failed FSI run | exec_acc 0.000 (all FAIL_NO_SQL) | **NO** | broken run, quarantined — see `archive/README.md` |
