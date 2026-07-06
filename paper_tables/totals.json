@@ -3,7 +3,10 @@
     "bench/results_ablation_100.csv": 1120,
     "bench/results_ablation_500.csv": 1440,
     "bench/results_bird_gpt55_full_dev.scored.csv": 1534,
+    "bench/results_repeat_full_r1.csv": 280,
+    "bench/results_repeat_full_r2.csv": 280,
+    "bench/results_repeat_full_r3.csv": 280,
     "results_v2_full_judged.csv": 100
   },
-  "total_evaluated_queries": 4194
+  "total_evaluated_queries": 5034
 }
