@@ -1,0 +1,12 @@
+{
+  "snowflake-staging": {
+    "dialect": "snowflake",
+    "account": "YOUR_ACCOUNT_IDENTIFIER",
+    "user": "NEXUS_SERVICE_USER",
+    "warehouse": "NEXUS_STAGING_WH",
+    "database": "NEXUS_STAGING",
+    "schema": "FIXTURE_V1",
+    "allowed_roles": ["NEXUS_FIXTURE_ACME", "NEXUS_FIXTURE_BETA"],
+    "credentials_env": {"password": "NEXUS_SNOWFLAKE_PASSWORD"}
+  }
+}

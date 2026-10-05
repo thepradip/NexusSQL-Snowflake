@@ -7,7 +7,7 @@ import {
 import DataVisualization from "./DataVisualization";
 import AgentSteps from "./AgentSteps";
 
-export default function MessageBubble({ message, onFeedback }) {
+export default function MessageBubble({ message, onFeedback, requestHeaders }) {
   const isUser = message.role === "user";
   const [feedback, setFeedback] = useState(null); // "up" | "down" | null
   const [showMetrics, setShowMetrics] = useState(false);
@@ -16,11 +16,11 @@ export default function MessageBubble({ message, onFeedback }) {
 
   if (isUser) {
     return (
-      <div className="flex items-start gap-4 py-2 justify-end">
+      <div className="flex items-start gap-2 sm:gap-4 py-2 justify-end">
         <div className="max-w-3xl rounded-[1.6rem] rounded-tr-md bg-[linear-gradient(135deg,rgba(102,217,239,0.18)_0%,rgba(128,255,211,0.12)_100%)] border border-[rgba(102,217,239,0.18)] px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.14)]">
           <div className="text-sm text-[var(--text-1)] leading-relaxed">{message.content}</div>
         </div>
-        <div className="w-10 h-10 rounded-2xl bg-[rgba(255,255,255,0.06)] border border-[rgba(125,168,214,0.14)] flex items-center justify-center flex-shrink-0">
+        <div className="hidden sm:flex w-10 h-10 rounded-2xl bg-[rgba(255,255,255,0.06)] border border-[rgba(125,168,214,0.14)] flex items-center justify-center flex-shrink-0">
           <User size={16} className="text-[var(--text-2)]" />
         </div>
       </div>
@@ -52,8 +52,8 @@ export default function MessageBubble({ message, onFeedback }) {
   const m = message.metrics;
 
   return (
-    <div className="flex items-start gap-4 py-2">
-      <div className="w-10 h-10 rounded-2xl bg-[rgba(102,217,239,0.12)] border border-[rgba(102,217,239,0.16)] flex items-center justify-center flex-shrink-0">
+    <div className="flex items-start gap-2 sm:gap-4 py-2">
+      <div className="hidden sm:flex w-10 h-10 rounded-2xl bg-[rgba(102,217,239,0.12)] border border-[rgba(102,217,239,0.16)] flex items-center justify-center flex-shrink-0">
         <Bot size={16} className="text-[var(--accent)]" />
       </div>
       <div className="glass-panel rounded-[1.7rem] rounded-tl-md flex-1 min-w-0 px-5 py-4">
@@ -66,7 +66,7 @@ export default function MessageBubble({ message, onFeedback }) {
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-400/10 border border-red-300/10 rounded-full text-[11px] text-red-200">
-                <X size={10} /> Error
+                <X size={10} /> {message.status === "needs_clarification" ? "Clarification needed" : message.status === "blocked" ? "Blocked" : "Failed"}
               </span>
             )}
 
@@ -112,6 +112,9 @@ export default function MessageBubble({ message, onFeedback }) {
           <ReactMarkdown>{message.content}</ReactMarkdown>
         </div>
 
+        {message.resolved_assumptions?.length > 0 && <details className="mt-3 text-sm text-[var(--text-2)]"><summary>Applied definitions and time range</summary><ul className="mt-2 space-y-2">{message.resolved_assumptions.map((item, index) => <li key={index}>{item.metric ? `${item.metric}: ${item.formula}; grain: ${item.grain}; date: ${item.date_column}; timezone: ${item.timezone}; calendar: ${item.fiscal_calendar}` : `Time range: ${JSON.stringify(item.time_boundaries)}`}</li>)}</ul></details>}
+        {message.data?.truncated && <p role="status" className="mt-3 text-sm text-amber-200">Results are truncated. This subset cannot support whole-population claims.</p>}
+        {message.result_freshness && <p className="mt-2 text-xs text-[var(--text-3)]">Fresh execution · {message.result_freshness.fetched_at || "just now"}</p>}
         {/* Action bar: feedback + metrics toggle */}
         {message.trace_id && (
           <div className="flex items-center gap-1 mt-4 pt-3 border-t border-[rgba(125,168,214,0.12)]">
@@ -161,7 +164,7 @@ export default function MessageBubble({ message, onFeedback }) {
             {/* Export CSV */}
             {message.data?.columns && (
               <button
-                onClick={() => exportCsv(message)}
+                onClick={() => exportCsv(message, requestHeaders)}
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[rgba(255,255,255,0.04)] transition-all"
                 title="Download results as CSV"
               >
@@ -204,6 +207,8 @@ export default function MessageBubble({ message, onFeedback }) {
           <AgentSteps steps={message.agent_steps} />
         )}
 
+        {message.sql && <details className="mt-3 text-sm text-[var(--text-2)]"><summary>Executed SQL</summary><pre className="mt-2 overflow-x-auto whitespace-pre-wrap"><code>{message.sql}</code></pre></details>}
+        {message.data && <div className="mt-4 overflow-x-auto"><table className="w-full text-sm text-left text-[var(--text-2)]"><caption className="text-left pb-2">Returned results ({message.data.row_count} rows)</caption><thead><tr>{message.data.columns.map((column, index) => <th scope="col" className="p-2 border-b border-[var(--text-3)]" key={index}>{column}</th>)}</tr></thead><tbody>{message.data.rows.map((row, index) => <tr key={index}>{row.map((value, col) => <td className="p-2 border-b border-[rgba(125,168,214,0.12)]" key={col}>{value === null ? "NULL" : typeof value === "object" ? JSON.stringify(value) : String(value)}</td>)}</tr>)}</tbody></table>{message.data.row_count === 0 && <p>No rows matched.</p>}</div>}
         {/* Visualization */}
         {message.visualization && <DataVisualization visualization={message.visualization} />}
       </div>
@@ -212,11 +217,11 @@ export default function MessageBubble({ message, onFeedback }) {
 }
 
 
-async function exportCsv(message) {
+async function exportCsv(message, requestHeaders) {
   try {
     const res = await fetch("/api/export/csv", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: requestHeaders || { "Content-Type": "application/json" },
       body: JSON.stringify({
         columns: message.data.columns,
         rows: message.data.rows,

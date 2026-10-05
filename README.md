@@ -1,5 +1,7 @@
 # NexusSQL: SQL AI Agent
 
+The v3 API uses a governed execution boundary with explicit authentication and Snowflake-specific sessions. See [setup, semantic review, acceptance, and rollout](docs/snowflake/IMPLEMENTATION.md). Administration requires `X-Admin-Key`; data routes require a registered `X-API-Key` unless explicit local anonymous mode is enabled. Live Snowflake certification and business adjudication are pending.
+
 **Natural language to SQL with multi-agent reasoning, schema-aware retrieval, and production observability.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

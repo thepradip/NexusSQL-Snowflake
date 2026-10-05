@@ -34,7 +34,7 @@ export default function AgentSteps({ steps }) {
       >
         <Cpu size={13} className="text-[var(--accent)]" />
         <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--accent)]">
-          Agent Reasoning
+          Agent activity
         </span>
         <span className="ml-1 text-[11px] text-[var(--text-3)]">
           {steps.length} step{steps.length !== 1 ? "s" : ""}

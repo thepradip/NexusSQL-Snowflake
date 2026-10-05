@@ -4,13 +4,16 @@ Pydantic models for API request/response.
 Author: Pradip Tivhale
 """
 
-from pydantic import BaseModel
+from typing import Literal
+from pydantic import BaseModel, Field
 
 
 class QueryRequest(BaseModel):
-    query: str
+    query: str = Field(min_length=1, max_length=10000)
     conversation_id: str | None = None
     force_agentic: bool = False
+    clarification_id: str | None = None
+    clarification_answers: dict[str, str] | None = None
 
 
 class QueryMetrics(BaseModel):
@@ -85,7 +88,16 @@ class QueryResponse(BaseModel):
     metrics: QueryMetrics | None = None
     visualization: QueryVisualization | None = None
     agent_mode: str = "pipeline"          # "pipeline" | "react"
-    agent_steps: list[dict] | None = None  # ReAct tool call trace for UI display
+    agent_steps: list[dict] | None = None  # Safe tool stage summaries only
+    status: Literal["answered", "needs_clarification", "blocked", "failed"] = "failed"
+    conversation_id: str | None = None
+    clarification: dict | None = None
+    resolved_assumptions: list[dict] = Field(default_factory=list)
+    schema_version: str | None = None
+    semantic_version: str | None = None
+    validation_summary: dict = Field(default_factory=dict)
+    snowflake_query_id: str | None = None
+    result_freshness: dict | None = None
 
 
 class FeedbackRequest(BaseModel):

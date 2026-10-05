@@ -1,3 +1,12 @@
+# Unreleased v3.0.0 — governed Snowflake API
+
+- Security: API queries now carry server-owned principal, tenant, role, policy, object and version scope through retrieval, validation, execution, tools, conversation and reuse.
+- Added: Snowflake connector adapter, bounded submissions/rows/bytes/deadlines, owned-ID cancellation, reviewed metric templates, clarification state, typed outcomes and scoped feedback.
+- Fixed: stale narration, unscoped reuse, shared history, fabricated agent completion, row-filter authorization fallback and invalid-key anonymous fallback on API paths.
+- UI: access key, clarification choices, applied definitions, result tables, truncation and freshness.
+- Breaking: authentication is required by default, administration uses a separate key, tenants need explicit allowlists, legacy row-filter injection is rejected, and legacy API evaluation/drift operations report pending configuration. See docs/snowflake/IMPLEMENTATION.md.
+- Validation: offline fixtures/regressions and frontend verification only. Snowflake role/policy/cost controls, human adjudication, staging, shadow evaluation and canaries are prerequisites for certification.
+
 # Changelog
 
 ## [Agent] - 2026-05-20

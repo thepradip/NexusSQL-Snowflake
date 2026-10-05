@@ -49,6 +49,12 @@ class TenantConfig:
     domain_hint: str = ""
     max_result_rows: int = 500
     created_at: float = 0.0
+    principal: str = ""
+    connection_profile: str = "main"
+    role: str = ""
+    database: str = ""
+    schema: str = ""
+    policy_version: str = "1"
 
 
 class TenantRegistry:
@@ -92,6 +98,7 @@ class TenantRegistry:
                 domain_hint=cfg_dict.get("domain_hint", ""),
                 max_result_rows=cfg_dict.get("max_result_rows", 500),
                 created_at=cfg_dict.get("created_at", 0.0),
+                **{k: cfg_dict.get(k, v) for k, v in {"principal": "", "connection_profile": "main", "role": "", "database": "", "schema": "", "policy_version": "1"}.items()},
             )
             self._by_id[tid] = tc
             self._key_to_id[key_hash] = tid
@@ -114,6 +121,7 @@ class TenantRegistry:
             "domain_hint": config.domain_hint,
             "max_result_rows": config.max_result_rows,
             "created_at": config.created_at,
+            **{k: getattr(config, k) for k in ("principal", "connection_profile", "role", "database", "schema", "policy_version")},
         }
         with sqlite3.connect(self._db_path) as conn:
             conn.execute("""
@@ -122,6 +130,9 @@ class TenantRegistry:
             """, (config.tenant_id, key_hash, json.dumps(cfg_dict), config.created_at))
             conn.commit()
 
+        old = self._by_id.get(config.tenant_id)
+        if old:
+            self._key_to_id.pop(old.api_key, None)
         self._by_id[config.tenant_id] = config
         self._key_to_id[key_hash] = config.tenant_id
         return config.tenant_id

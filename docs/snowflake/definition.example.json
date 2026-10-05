@@ -1,0 +1,19 @@
+{
+  "tenant_id": "acme",
+  "definition": {
+    "id": "booked-revenue-cohort-v1",
+    "name": "booked revenue",
+    "synonyms": ["revenue"],
+    "formula": "SUM(AMOUNT)",
+    "grain": "total",
+    "dimensions": [],
+    "joins": [],
+    "date_column": "BOOKED_AT",
+    "timezone": "UTC",
+    "fiscal_calendar": "calendar",
+    "objects": ["NEXUS_STAGING.FIXTURE_V1.ORDERS"],
+    "sql_template": "SELECT SUM(AMOUNT) AS TOTAL FROM ORDERS WHERE COHORT = :cohort",
+    "parameters": [{"name": "cohort", "intent_field": "COHORT", "type": "integer", "allowed_values": [1,2,3,4,5,6,7,8,9,10]}],
+    "review_intent": {"grain": "total", "dimensions": [], "filters": [{"field": "COHORT", "value": 1}], "time_boundaries": {}}
+  }
+}

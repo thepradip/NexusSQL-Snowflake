@@ -1,0 +1,18 @@
+{
+  "tenant_id": "acme",
+  "principal": "acme-analyst",
+  "api_key": "REPLACE_WITH_RANDOM_TENANT_KEY",
+  "connection_profile": "snowflake-staging",
+  "role": "NEXUS_FIXTURE_ACME",
+  "database": "NEXUS_STAGING",
+  "schema": "FIXTURE_V1",
+  "policy_version": "fixture-v1",
+  "allowed_tables": [
+    "NEXUS_STAGING.FIXTURE_V1.ORDERS",
+    "NEXUS_STAGING.FIXTURE_V1.PAYMENTS",
+    "NEXUS_STAGING.FIXTURE_V1.ORDER_ITEMS",
+    "NEXUS_STAGING.FIXTURE_V1.EVENTS",
+    "NEXUS_STAGING.FIXTURE_V1.CUSTOMER_SEGMENTS"
+  ],
+  "max_result_rows": 500
+}

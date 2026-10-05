@@ -1,10 +1,12 @@
 """Application configuration from environment variables."""
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
+    llm_provider: str = "azure"
+
     # Azure OpenAI
     azure_openai_endpoint: str
     azure_openai_api_key: str
@@ -16,6 +18,13 @@ class Settings(BaseSettings):
     # PostgreSQL:  postgresql+asyncpg://user:pass@host:5432/dbname
     # MySQL:       mysql+aiomysql://user:pass@host:3306/dbname
     database_url: str = "sqlite+aiosqlite:///./health.db"
+
+    # Governed runtime. Anonymous requests require BOTH explicit local settings.
+    app_environment: str = "production"
+    allow_anonymous_local: bool = False
+    admin_api_key: str = ""
+    connection_profiles_file: str = ""
+    local_allowed_tables: str = ""
 
     # Query safety
     max_result_rows: int = 500
@@ -78,10 +87,7 @@ class Settings(BaseSettings):
     # CORS
     frontend_url: str = "http://localhost:5173"
 
-    class Config:
-        env_file = ("../.env", ".env")
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    model_config = SettingsConfigDict(env_file=("../.env", ".env"), env_file_encoding="utf-8", extra="ignore")
 
 
 @lru_cache

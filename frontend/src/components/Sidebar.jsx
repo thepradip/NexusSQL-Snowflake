@@ -29,7 +29,7 @@ export default function Sidebar({
   onSampleQuery,
 }) {
   return (
-    <aside className="glass-panel-strong w-80 flex-shrink-0 border-r flex flex-col rounded-r-[2rem] overflow-hidden">
+    <aside className="glass-panel-strong hidden lg:flex w-80 flex-shrink-0 border-r flex flex-col rounded-r-[2rem] overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-[rgba(125,168,214,0.14)]">
         <div className="flex items-center gap-3 mb-2">

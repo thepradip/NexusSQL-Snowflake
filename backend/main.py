@@ -1,660 +1,303 @@
-"""
-FastAPI backend — SQL AI Agent REST API with MLflow observability.
-Fully dynamic, works with any database.
-
-Author: Pradip Tivhale
-"""
-
+"""Governed REST API. Both query routes use one server-owned execution boundary."""
+import asyncio
+from contextlib import asynccontextmanager
+from dataclasses import replace
+from hashlib import sha256
 import csv
+import hmac
 import io
 import json
-import sqlite3
-import time as _time
-from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from config import get_settings
-from database import get_table_list, build_full_context
-from agent import init_agent, run_query, get_cache, set_training_store, get_provider_name, set_drift_monitor, get_drift_monitor
-from tracing import init_tracing, log_user_feedback, log_detailed_feedback, EXPERIMENT_NAME
-from training_store import TrainingStore
-from tenant import TenantRegistry, TenantConfig, check_table_access, apply_row_filters
-from models import (
-    QueryRequest, QueryResponse, HealthCheck, SchemaResponse,
-    FeedbackRequest, DetailedFeedbackRequest, ExportRequest,
-)
+from models import QueryRequest, QueryResponse, ExportRequest, FeedbackRequest, DetailedFeedbackRequest
+from tenant import TenantRegistry, TenantConfig
+from execution_context import ExecutionContext, RequestBudget, AuthenticationError, authenticate
+from adapters import SnowflakeAdapter, LegacyAdapter
+from governed_store import GovernedStore, identity
+from governed_runtime import GovernedRuntime
+from llm_providers import get_provider
+from tracing import init_tracing
+from trusted_validator import validate, ValidationError
 
 settings = get_settings()
-
-
-# ─── Persistent conversation store ─────────────────────────────────────────────
-
-class ConversationStore:
-    """
-    SQLite-backed conversation history.
-    Survives server restarts — in-memory dict was wiped on every deploy.
-    In-memory cache keeps hot conversations fast; DB is the source of truth.
-    """
-    MAX_MESSAGES = 20
-
-    def __init__(self, db_path: str = ".conversations.db"):
-        self._db_path = db_path
-        self._cache: dict[str, list[dict]] = {}
-        with sqlite3.connect(db_path) as conn:
-            conn.executescript("""
-                CREATE TABLE IF NOT EXISTS conversations (
-                    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                    conv_id    TEXT    NOT NULL,
-                    role       TEXT    NOT NULL,
-                    content    TEXT    NOT NULL,
-                    created_at REAL    NOT NULL
-                );
-                CREATE INDEX IF NOT EXISTS idx_conv ON conversations(conv_id, id);
-            """)
-
-    def get(self, conv_id: str) -> list[dict]:
-        if conv_id in self._cache:
-            return self._cache[conv_id]
-        with sqlite3.connect(self._db_path) as conn:
-            rows = conn.execute(
-                "SELECT role, content FROM conversations WHERE conv_id = ? ORDER BY id",
-                (conv_id,),
-            ).fetchall()
-        history = [{"role": r, "content": c} for r, c in rows]
-        self._cache[conv_id] = history
-        return history
-
-    def append(self, conv_id: str, msgs: list[dict]) -> None:
-        history = self.get(conv_id)
-        history.extend(msgs)
-        self._cache[conv_id] = history[-self.MAX_MESSAGES:]
-        with sqlite3.connect(self._db_path) as conn:
-            for msg in msgs:
-                conn.execute(
-                    "INSERT INTO conversations (conv_id, role, content, created_at) VALUES (?,?,?,?)",
-                    (conv_id, msg["role"], msg["content"], _time.time()),
-                )
-            # Keep only last MAX_MESSAGES rows per conversation
-            conn.execute("""
-                DELETE FROM conversations WHERE conv_id = ? AND id NOT IN (
-                    SELECT id FROM conversations WHERE conv_id = ? ORDER BY id DESC LIMIT ?
-                )
-            """, (conv_id, conv_id, self.MAX_MESSAGES))
-            conn.commit()
-
-    def clear(self, conv_id: str) -> None:
-        self._cache.pop(conv_id, None)
-        with sqlite3.connect(self._db_path) as conn:
-            conn.execute("DELETE FROM conversations WHERE conv_id = ?", (conv_id,))
-            conn.commit()
-
-
-_conv_store    = ConversationStore()
-_training_store = TrainingStore()
 _tenant_registry = TenantRegistry()
+_store = GovernedStore()
+_profiles = json.loads(Path(settings.connection_profiles_file).read_text()) if settings.connection_profiles_file else {
+    'main': {'dialect': 'sqlite' if 'sqlite' in settings.database_url else 'postgres' if 'postgres' in settings.database_url else 'mysql',
+             'database_url': settings.database_url}}
+_adapters = {}
+_provider = None
 
-# Wire training store into the agent
-set_training_store(_training_store)
+
+def _context(tenant):
+    profile = _profiles.get(tenant.connection_profile)
+    if not profile: raise AuthenticationError('Connection profile unavailable')
+    dialect = profile.get('dialect', 'snowflake')
+    if tenant.row_filters:
+        raise AuthenticationError('Tenant requires database-enforced row policies; SQL filter injection is disabled')
+    if dialect == 'snowflake':
+        if not tenant.role or tenant.role not in profile.get('allowed_roles', []):
+            raise AuthenticationError('Role is not authorized for this connection profile')
+        database, schema = tenant.database or profile.get('database'), tenant.schema or profile.get('schema')
+        if not database or not schema: raise AuthenticationError('Database scope is unavailable')
+        allowed = frozenset(tenant.allowed_tables or ())
+        if any(len(o.split('.')) != 3 for o in allowed):
+            raise AuthenticationError('Snowflake objects must be fully qualified')
+    else:
+        database, schema = '', ''
+        allowed = frozenset(t.lower() for t in (tenant.allowed_tables or settings.local_allowed_tables.split(',')) if t)
+    if not allowed: raise AuthenticationError('No objects authorized; configure an explicit allowlist')
+    return ExecutionContext(principal=tenant.principal or tenant.tenant_id, tenant=tenant.tenant_id,
+        connection_profile=tenant.connection_profile, role=tenant.role, database=database, schema=schema,
+        policy_version=tenant.policy_version, allowed_objects=allowed, dialect=dialect,
+        budget=RequestBudget(max_rows=min(500, max(1, tenant.max_result_rows))))
+
+
+def _adapter(context):
+    key = context.connection_profile
+    if key not in _adapters:
+        _adapters[key] = SnowflakeAdapter(_profiles) if context.dialect == 'snowflake' else LegacyAdapter(_profiles[key]['database_url'])
+    return _adapters[key]
+
+
+def _runtime_for(context):
+    global _provider
+    if _provider is None: _provider = get_provider(settings.llm_provider, settings)
+    return GovernedRuntime(_provider, _adapter(context), _store, settings)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Initializing SQL AI Agent...")
+async def lifespan(app):
     init_tracing()
-    await init_agent()
-    tables = await get_table_list()
-    print(f"  Database ready — {len(tables)} tables: {tables}")
     yield
-    print("Shutting down.")
+    for adapter in _adapters.values():
+        if isinstance(adapter, LegacyAdapter): await adapter.engine.dispose()
 
+app = FastAPI(title='NexusSQL', version='3.0.0', lifespan=lifespan)
+app.add_middleware(CORSMiddleware, allow_origins=[settings.frontend_url], allow_credentials=True,
+                   allow_methods=['GET','POST','DELETE'], allow_headers=['Content-Type','X-API-Key','X-Admin-Key'])
 
-app = FastAPI(
-    title="SQL AI Agent",
-    description="Natural language to SQL with MLflow observability — by Pradip Tivhale",
-    version="2.0.0",
-    lifespan=lifespan,
-)
+_ADMIN_PREFIXES = ('/tenants', '/train', '/cache', '/evaluate', '/database', '/drift', '/semantics', '/examples')
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://localhost:5173", "http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-# ─── Routes ─────────────────────────────────────────────────────────────────────
-
-@app.get("/health", response_model=HealthCheck)
-async def health_check():
-    tables = await get_table_list()
-    return HealthCheck(
-        status="ok",
-        database=settings.database_url.split("///")[-1],
-        tables=tables,
-        mlflow_experiment=EXPERIMENT_NAME,
-        visualization_service_url=settings.visualization_service_url,
-        visualization_service_enabled=settings.visualization_service_enabled,
-    )
-
-
-@app.get("/schema", response_model=SchemaResponse)
-async def get_schema():
-    context = await build_full_context()
-    return SchemaResponse(schema_text=context)
-
-
-@app.post("/query", response_model=QueryResponse)
-async def query(
-    request: QueryRequest,
-    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
-):
-    # Resolve tenant (None = single-tenant / no auth mode)
-    tenant = _tenant_registry.get_by_api_key(x_api_key) if x_api_key else None
-    conv_id = request.conversation_id or "default"
-    history = _conv_store.get(conv_id)
-
-    result = await run_query(
-        request.query, history, force_agentic=request.force_agentic
-    )
-
-    _conv_store.append(conv_id, [
-        {"role": "user", "content": request.query},
-        {"role": "assistant", "content": result["response"]},
-    ])
-
-    return QueryResponse(
-        sql=result["sql"],
-        data=result["data"],
-        response=result["response"],
-        success=result["success"],
-        trace_id=result.get("trace_id"),
-        metrics=result.get("metrics"),
-        visualization=result.get("visualization"),
-        agent_mode=result.get("agent_mode", "pipeline"),
-        agent_steps=result.get("steps"),
-    )
-
-
-@app.post("/feedback")
-async def submit_feedback(request: FeedbackRequest):
-    """
-    Submit thumbs up/down feedback for a query trace.
-    Thumbs-up automatically marks the cache entry as verified — it will be
-    prioritised as a few-shot example in future similar queries.
-    """
-    try:
-        log_user_feedback(
-            trace_id=request.trace_id,
-            feedback_value=request.value,
-            user_id=request.user_id,
-            comment=request.comment,
-        )
-        verified = False
-        if request.value:   # thumbs up → teach the agent
-            cache = get_cache()
-            if cache:
-                verified = cache.verify_by_trace(request.trace_id)
-        return {"status": "ok", "trace_id": request.trace_id, "cache_verified": verified}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/feedback/detailed")
-async def submit_detailed_feedback(request: DetailedFeedbackRequest):
-    """Submit detailed multi-dimension feedback."""
-    try:
-        log_detailed_feedback(
-            trace_id=request.trace_id,
-            accuracy=request.accuracy,
-            relevance=request.relevance,
-            sql_quality=request.sql_quality,
-            user_id=request.user_id,
-            comment=request.comment,
-        )
-        return {"status": "ok", "trace_id": request.trace_id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/evaluate")
-async def run_eval(quick: bool = True):
-    """Run SQLAS evaluation suite. ?quick=true for 3 tests, ?quick=false for full suite."""
-    from eval_runner import run_evaluation
-    try:
-        results = await run_evaluation(quick=quick)
-        return results
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.delete("/conversations/{conv_id}")
-async def clear_conversation(conv_id: str):
-    _conv_store.clear(conv_id)
-    return {"status": "cleared"}
-
-
-# ─── Export ─────────────────────────────────────────────────────────────────────
-
-@app.post("/export/csv")
-async def export_csv(request: ExportRequest):
-    """
-    Download query results as a CSV file.
-    The frontend passes the columns + rows from the last query result —
-    no re-execution needed, and no additional LLM cost.
-    Uses UTF-8 BOM (utf-8-sig) so Excel opens it correctly without encoding issues.
-    """
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(request.columns)
-    writer.writerows(request.rows)
-
-    filename = request.filename.replace('"', "")   # sanitise for Content-Disposition
-    return StreamingResponse(
-        io.BytesIO(output.getvalue().encode("utf-8-sig")),
-        media_type="text/csv",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-    )
-
-
-# ─── Cache API ──────────────────────────────────────────────────────────────────
-
-@app.get("/cache/stats")
-async def cache_stats():
-    """
-    Cache analytics: hit rates, tokens saved, cost savings, top cached queries.
-    Use this to demonstrate ROI of the caching layer.
-    """
-    cache = get_cache()
-    if cache is None:
-        return {"enabled": False, "message": "Cache is disabled (CACHE_ENABLED=false)"}
-    return {"enabled": True, **cache.get_analytics()}
-
-
-@app.delete("/cache/results")
-async def invalidate_result_cache():
-    """
-    Purge SQL result cache. Call this after any data updates to ensure fresh results.
-    Does NOT affect the NL→SQL query cache.
-    """
-    cache = get_cache()
-    if cache is None:
-        return {"status": "skipped", "message": "Cache disabled"}
-    purged = cache.invalidate_results()
-    return {"status": "ok", "purged_entries": purged}
-
-
-@app.delete("/cache/all")
-async def clear_cache():
-    """
-    Wipe all cache entries (query cache + result cache).
-    Use when schema changes significantly or you want a clean slate.
-    """
-    cache = get_cache()
-    if cache is None:
-        return {"status": "skipped", "message": "Cache disabled"}
-    cache.clear_all()
-    return {"status": "ok", "message": "All cache entries cleared"}
-
-
-# ─── Training Store API ────────────────────────────────────────────────────────
-
-@app.post("/train/ddl")
-async def train_ddl(body: dict):
-    """
-    Ingest a DDL statement into the training store.
-    Helps the LLM understand column semantics and constraints.
-    """
-    ddl   = body.get("ddl", "").strip()
-    title = body.get("title", "")
-    if not ddl:
-        raise HTTPException(status_code=400, detail="ddl is required")
-    item_id = _training_store.add_ddl(ddl, title=title)
-    return {"status": "ok", "id": item_id, "size": _training_store.size()}
-
-
-@app.post("/train/documentation")
-async def train_documentation(body: dict):
-    """
-    Ingest business documentation or term definitions.
-    Example: "Revenue = SUM(orders.total) WHERE status = 'completed'"
-    """
-    text  = body.get("text", "").strip()
-    title = body.get("title", "")
-    if not text:
-        raise HTTPException(status_code=400, detail="text is required")
-    item_id = _training_store.add_documentation(text, title=title)
-    return {"status": "ok", "id": item_id, "size": _training_store.size()}
-
-
-@app.post("/train/sql")
-async def train_sql(body: dict):
-    """
-    Ingest a verified (question → SQL) pair as a few-shot example.
-    These are injected into the SQL generation prompt for similar future queries.
-    """
-    question = body.get("question", "").strip()
-    sql      = body.get("sql", "").strip()
-    if not question or not sql:
-        raise HTTPException(status_code=400, detail="question and sql are required")
-    item_id = _training_store.add_sql_example(question, sql)
-    return {"status": "ok", "id": item_id, "size": _training_store.size()}
-
-
-@app.get("/train/list")
-async def list_training():
-    """List all training items in the store."""
-    return {"items": _training_store.list_all(), "size": _training_store.size()}
-
-
-@app.delete("/train/{item_id}")
-async def delete_training(item_id: str):
-    """Remove a training item by its ID."""
-    removed = _training_store.delete(item_id)
-    if not removed:
-        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
-    return {"status": "ok", "size": _training_store.size()}
-
-
-# ─── Multi-Tenant API ──────────────────────────────────────────────────────────
-
-@app.post("/tenants")
-async def register_tenant(body: dict):
-    """
-    Register a tenant with table access control and row-level filters.
-
-    Body example:
-    {
-        "tenant_id":      "acme_corp",
-        "api_key":        "acme-secret-key",
-        "allowed_tables": ["orders", "customers"],
-        "row_filters":    {"orders": "tenant_id = 'acme'"},
-        "domain_hint":    "ACME Corp e-commerce database"
-    }
-    """
-    try:
-        tc = TenantConfig(
-            tenant_id      = body["tenant_id"],
-            api_key        = body["api_key"],
-            allowed_tables = set(body["allowed_tables"]) if body.get("allowed_tables") else None,
-            row_filters    = body.get("row_filters", {}),
-            pii_columns    = body.get("pii_columns"),
-            domain_hint    = body.get("domain_hint", ""),
-            max_result_rows= body.get("max_result_rows", 500),
-        )
-    except KeyError as e:
-        raise HTTPException(status_code=400, detail=f"Missing field: {e}")
-    _tenant_registry.register(tc)
-    return {"status": "ok", "tenant_id": tc.tenant_id}
-
-
-@app.get("/tenants")
-async def list_tenants():
-    return {"tenants": _tenant_registry.list_tenants()}
-
-
-# ─── Streaming Query (SSE) ─────────────────────────────────────────────────────
-
-@app.post("/query/stream")
-async def query_stream(
-    request: QueryRequest,
-    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
-):
-    """
-    Streaming version of /query using Server-Sent Events.
-    Yields progress events so the frontend can show stages in real-time:
-      schema_retrieved → sql_generated → sql_executed → response_ready
-
-    Frontend usage:
-        const es = await fetch('/api/query/stream', {method:'POST', body: JSON.stringify({query})})
-        const reader = es.body.getReader()
-        // read events as they arrive
-    """
-    tenant = _tenant_registry.get_by_api_key(x_api_key) if x_api_key else None
-    conv_id = request.conversation_id or "default"
-    history = _conv_store.get(conv_id)
-
-    async def event_stream():
+@app.middleware('http')
+async def authorize(request: Request, call_next):
+    if request.method == 'OPTIONS' or request.url.path in ('/health', '/docs', '/openapi.json', '/redoc'):
+        return await call_next(request)
+    if request.url.path.startswith(_ADMIN_PREFIXES):
+        key = request.headers.get('X-Admin-Key', '')
+        if not settings.admin_api_key or not hmac.compare_digest(key, settings.admin_api_key):
+            return JSONResponse(status_code=403, content={'detail':'Administrator authorization required'})
+    else:
         try:
-            # Stage 1 — schema retrieval
-            yield f"data: {json.dumps({'stage': 'retrieving_schema', 'message': 'Identifying relevant tables...'})}\n\n"
+            tenant = authenticate(request.headers.get('X-API-Key'), _tenant_registry,
+                allow_anonymous=settings.app_environment == 'local' and settings.allow_anonymous_local)
+            request.state.context = _context(tenant)
+        except AuthenticationError as exc:
+            return JSONResponse(status_code=401, content={'detail':str(exc)})
+    return await call_next(request)
 
-            # Stage 2 — SQL generation (run full pipeline)
-            yield f"data: {json.dumps({'stage': 'generating_sql', 'message': 'Generating SQL query...'})}\n\n"
+@app.get('/health')
+async def health():
+    return {'status':'ok', 'database':'configured', 'tables':[], 'mlflow_experiment':'NexusSQL',
+            'visualization_service_enabled':False}
 
-            result = await run_query(
-                request.query,
-                history,
-                force_agentic=request.force_agentic,
-            )
-
-            # Stage 3 — done
-            if result.get("success"):
-                yield f"data: {json.dumps({'stage': 'sql_executed', 'message': 'Executing SQL...', 'sql': result.get('sql', '')})}\n\n"
-                yield f"data: {json.dumps({'stage': 'response_ready', 'result': result})}\n\n"
-            else:
-                yield f"data: {json.dumps({'stage': 'error', 'message': result.get('response', 'Query failed')})}\n\n"
-
-            _conv_store.append(conv_id, [
-                {"role": "user",      "content": request.query},
-                {"role": "assistant", "content": result.get("response", "")},
-            ])
-
-        except Exception as e:
-            yield f"data: {json.dumps({'stage': 'error', 'message': str(e)})}\n\n"
-
-    return StreamingResponse(event_stream(), media_type="text/event-stream",
-                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
-
-
-# ─── Database Connection Testing ──────────────────────────────────────────────
-
-def _classify_db_error(error_type: str, error_msg: str) -> dict:
-    """Map raw DB exceptions to user-friendly messages with fix hints."""
-    msg = error_msg.lower()
-
-    if "connection refused" in msg or "connect call failed" in msg or "no route to host" in msg:
-        return {"cause": "Host unreachable", "fix": "Check the hostname/IP and port. Is the database server running?"}
-    if any(w in msg for w in ("password", "authentication", "auth failed", "access denied", "invalid password")):
-        return {"cause": "Authentication failed", "fix": "Check username and password in DATABASE_URL."}
-    if any(w in msg for w in ("database", "schema")) and any(w in msg for w in ("not found", "does not exist", "unknown")):
-        return {"cause": "Database not found", "fix": "Check the database/schema name in DATABASE_URL."}
-    if "timeout" in msg or "timed out" in msg or "connect timeout" in msg:
-        return {"cause": "Connection timed out", "fix": "Host is unreachable or firewall is blocking the port."}
-    if "ssl" in msg or "tls" in msg or "certificate" in msg:
-        return {"cause": "SSL/TLS error", "fix": "Check SSL configuration. Try adding ?sslmode=disable for testing."}
-    if "no module" in msg or "modulenotfounderror" in error_type.lower():
-        driver = "asyncpg" if "postgres" in msg else "aiomysql" if "mysql" in msg else "unknown"
-        return {"cause": "DB driver not installed", "fix": f"Run: pip install {driver}"}
-    if "too many connections" in msg or "connection pool" in msg:
-        return {"cause": "Too many connections", "fix": "Reduce pool_size or close unused connections."}
-    if "permission denied" in msg or "privilege" in msg:
-        return {"cause": "Insufficient permissions", "fix": "The user needs SELECT privileges on the target database."}
-    return {"cause": "Connection failed", "fix": f"{error_type}: {error_msg[:120]}"}
-
-
-@app.post("/database/test")
-async def test_database_connection(body: dict):
-    """
-    Test a database connection before using it.
-    Call this whenever a user uploads or changes DATABASE_URL.
-
-    Returns:
-        200 — connection OK with table count
-        422 — connection failed with user-friendly error + fix hint
-    """
-    db_url = (body.get("database_url") or "").strip()
-    if not db_url:
-        raise HTTPException(status_code=400, detail="database_url is required")
-
-    # Safety: reject non-async URLs (we only support async drivers)
-    if not any(d in db_url for d in ("aiosqlite", "asyncpg", "aiomysql", "+async")):
-        # Auto-convert common sync URLs
-        db_url = (db_url
-                  .replace("postgresql://", "postgresql+asyncpg://")
-                  .replace("postgres://",   "postgresql+asyncpg://")
-                  .replace("mysql://",      "mysql+aiomysql://")
-                  .replace("sqlite:///",    "sqlite+aiosqlite:///"))
-
-    from sqlalchemy.ext.asyncio import create_async_engine
-    from sqlalchemy import text as sa_text, inspect
-
-    test_engine = None
+@app.get('/schema')
+async def schema(request: Request):
+    context = request.state.context
     try:
-        test_engine = create_async_engine(
-            db_url,
-            pool_pre_ping=True,
-            connect_args={"connect_timeout": 10} if "postgres" in db_url or "mysql" in db_url else {},
-        )
+        metadata = await _adapter(context).metadata(context)
+        return {'schema_text':json.dumps(metadata, default=str)}
+    except Exception: raise HTTPException(503, 'Authorized metadata is unavailable')
 
-        async with test_engine.connect() as conn:
-            # Basic connectivity
-            await conn.execute(sa_text("SELECT 1"))
+async def _run_query(body, request, progress=None):
+    context = request.state.context
+    coroutine = _runtime_for(context).query(body.query, context, body.conversation_id,
+        force_agentic=body.force_agentic, clarification_id=body.clarification_id,
+        clarification_answers=body.clarification_answers, progress=progress)
+    if progress is not None:
+        result = await coroutine  # SSE response owns its disconnect cancellation.
+    else:
+        task = asyncio.create_task(coroutine)
+        stop_monitor = asyncio.Event()
+        async def disconnected():
+            while not stop_monitor.is_set():
+                if await request.is_disconnected(): return
+                await asyncio.sleep(.05)
+        monitor = asyncio.create_task(disconnected())
+        try:
+            done, _ = await asyncio.wait({task,monitor},return_when=asyncio.FIRST_COMPLETED)
+            if task in done: result = await task
+            else: raise HTTPException(499,'Request disconnected')
+        finally:
+            stop_monitor.set()
+            task.cancel(); monitor.cancel()
+            await asyncio.gather(task,monitor,return_exceptions=True)
+    # Return exactly the same envelope from both endpoints.
+    return QueryResponse(**result).model_dump()
 
-            # Count tables
-            def _get_tables(c):
-                return inspect(c).get_table_names()
+@app.post('/query', response_model=QueryResponse)
+async def query(body: QueryRequest, request: Request):
+    return await _run_query(body, request)
 
-            tables = await conn.run_sync(_get_tables)
+@app.post('/query/stream')
+async def query_stream(body: QueryRequest, request: Request):
+    async def events():
+        queue = asyncio.Queue(maxsize=16)
+        async def progress(stage): await queue.put({'stage':stage})
+        async def run():
+            try:
+                result = await _run_query(body, request, progress)
+                await queue.put({'stage':'complete', 'result':result})
+            except asyncio.CancelledError: raise
+            except Exception:
+                result = QueryResponse(sql='',data=None,response='The analysis could not be completed safely.',
+                    success=False,status='failed',conversation_id=body.conversation_id).model_dump()
+                await queue.put({'stage':'complete','result':result})
+        task = asyncio.create_task(run())
+        try:
+            while True:
+                event = await queue.get()
+                yield 'data: ' + json.dumps(event, default=str) + '\n\n'
+                if event['stage'] == 'complete': break
+        finally:
+            task.cancel()
+            try: await task
+            except asyncio.CancelledError: pass
+    return StreamingResponse(events(),media_type='text/event-stream',headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})
 
-        return {
-            "status": "ok",
-            "message": f"Connection successful — {len(tables)} table(s) found",
-            "table_count": len(tables),
-            "tables_preview": tables[:10],
-            "normalized_url": db_url,
-        }
+@app.delete('/conversations/{conversation_id}')
+async def clear_conversation(conversation_id: str, request: Request):
+    _store.clear_conversation(request.state.context, conversation_id)
+    return {'status':'cleared'}
 
-    except Exception as e:
-        detail = _classify_db_error(type(e).__name__, str(e))
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "status":    "error",
-                "cause":     detail["cause"],
-                "fix":       detail["fix"],
-                "raw_error": str(e)[:300],
-            },
-        )
-    finally:
-        if test_engine:
-            await test_engine.dispose()
+@app.post('/feedback')
+async def feedback(body: FeedbackRequest, request: Request):
+    if not _store.feedback(request.state.context, body.trace_id, body.value, body.comment):
+        raise HTTPException(404, 'Trace unavailable')
+    return {'status':'ok','cache_verified':False}
 
+@app.post('/feedback/detailed')
+async def detailed_feedback(body: DetailedFeedbackRequest, request: Request):
+    if not _store.feedback(request.state.context,body.trace_id,
+            {'accuracy':body.accuracy,'relevance':body.relevance,'sql_quality':body.sql_quality},body.comment):
+        raise HTTPException(404,'Trace unavailable')
+    return {'status':'ok'}
 
-@app.get("/database/status")
-async def database_status():
-    """
-    Check the health of the currently configured database connection.
-    Use this for health checks and monitoring.
-    """
+@app.post('/export/csv')
+async def export(body: ExportRequest):
+    output = io.StringIO(); writer = csv.writer(output)
+    def safe(value):
+        text = str(value) if value is not None else ''
+        return "'" + text if text.startswith(('=','+','-','@')) else text
+    writer.writerow([safe(v) for v in body.columns])
+    writer.writerows([safe(v) for v in row] for row in body.rows)
+    return StreamingResponse(io.BytesIO(output.getvalue().encode('utf-8-sig')),media_type='text/csv',
+        headers={'Content-Disposition':'attachment; filename="query_results.csv"'})
+
+@app.post('/tenants')
+async def register(body: dict):
     try:
-        from database import get_table_list
-        tables = await get_table_list()
-        return {
-            "status":      "ok",
-            "table_count": len(tables),
-            "tables":      tables[:20],
-            "database":    settings.database_url.split("///")[-1].split("@")[-1],  # no credentials
-        }
-    except Exception as e:
-        detail = _classify_db_error(type(e).__name__, str(e))
-        return {
-            "status":  "error",
-            "cause":   detail["cause"],
-            "fix":     detail["fix"],
-        }
+        tenant = TenantConfig(**{**body, 'allowed_tables':set(body.get('allowed_tables') or [])})
+        _context(tenant)  # verify server profile, role, explicit allowlist, no filter injection
+    except (TypeError, AuthenticationError): raise HTTPException(400,'Invalid tenant configuration')
+    _tenant_registry.register(tenant)
+    return {'status':'ok','tenant_id':tenant.tenant_id}
+
+@app.get('/tenants')
+async def tenants(): return {'tenants':_tenant_registry.list_tenants()}
 
 
-# ─── Drift Monitoring API ──────────────────────────────────────────────────────
+def admin_context(tenant_id):
+    tenant = _tenant_registry.get(tenant_id)
+    if not tenant: raise HTTPException(404,'Tenant unavailable')
+    try: return _context(tenant)
+    except AuthenticationError: raise HTTPException(400,'Tenant configuration unavailable')
 
-@app.post("/drift/configure")
-async def configure_drift(body: dict):
-    """
-    Configure and start production drift monitoring.
+async def versioned_context(tenant_id):
+    context = admin_context(tenant_id)
+    schema = await _adapter(context).metadata(context)
+    context = replace(context,schema_version=sha256(json.dumps(schema,sort_keys=True,default=str).encode()).hexdigest())
+    definitions = _store.definitions(context)
+    return replace(context,semantic_version=sha256(json.dumps(definitions,sort_keys=True).encode()).hexdigest()), schema
 
-    Body:
-      mode          "full" | "sample" | "stratified" | "adaptive"
-      sample_rate   0.0–1.0  (default 0.10 = 10% of queries)
-      baseline_n    queries needed to establish baseline (default 50)
-      mlflow_exp    optional MLflow experiment name
-      alert_webhook optional webhook URL for drift alerts
+@app.post('/semantics')
+async def semantics(body: dict):
+    context, metadata = await versioned_context(body.get('tenant_id'))
+    definition = body.get('definition', {})
+    try:
+        # Validate reviewed templates using representative parameter values.
+        from semantic_contract import render_template
+        test_intent = definition.get('review_intent', {})
+        sql, _ = render_template(definition,test_intent,context.dialect)
+        validate(sql,context,metadata,approved_joins=definition.get('joins', []),reviewed_template=True)
+        _store.put_definition(context,definition,'administrator')
+    except (ValueError, KeyError, ValidationError): raise HTTPException(400,'Definition requires a valid reviewed query contract and review intent')
+    return {'status':'reviewed','definition_id':definition['id']}
 
-    Cost guide:
-      mode=full,    rate=1.0  → ~$0.05/query  (full coverage)
-      mode=sample,  rate=0.10 → ~$0.005/query (10% sampling)
-      mode=sample,  rate=0.01 → ~$0.0005/query (1% sampling, min cost)
-    """
-    from drift_monitor import DriftMonitor
-    from llm_providers import get_provider
+@app.get('/semantics')
+async def list_semantics(tenant_id: str): return {'definitions':_store.definitions(admin_context(tenant_id))}
 
-    mode        = body.get("mode", "sample")
-    sample_rate = float(body.get("sample_rate", 0.10))
-    baseline_n  = int(body.get("baseline_n", 50))
-    mlflow_exp  = body.get("mlflow_exp")
-    webhook     = body.get("alert_webhook")
+@app.post('/examples/approve')
+async def approve_example(body: dict):
+    context, metadata = await versioned_context(body.get('tenant_id'))
+    try: validate(body['sql'],context,metadata)
+    except (KeyError,ValidationError): raise HTTPException(400,'Example is invalid')
+    _store.approve_example(context,body['question'],body['sql'],'administrator')
+    return {'status':'reviewed'}
 
-    prov = get_provider("azure", settings)
+@app.post('/train/{kind}')
+async def train(kind: str, body: dict):
+    context = admin_context(body.get('tenant_id'))
+    if kind == 'sql': return await approve_example(body)
+    if kind not in ('ddl','documentation'): raise HTTPException(404,'Training type unavailable')
+    value = body.get('ddl' if kind == 'ddl' else 'text', '')
+    if not value: raise HTTPException(400,'Training content required')
+    key = sha256(value.encode()).hexdigest()
+    _store._put(identity(context),'training',key,{'id':key,'type':kind,'text':value,'approved':False})
+    return {'status':'stored_untrusted','id':key}
 
-    def judge(prompt: str) -> str:
-        return prov.complete([{"role": "user", "content": prompt}], max_tokens=500)
+@app.get('/train/list')
+async def list_training(tenant_id: str): return {'items':_store._list(identity(admin_context(tenant_id)),'training')}
 
-    from database import execute_readonly_query as exec_fn_raw
-    monitor = DriftMonitor(
-        llm_judge     = judge,
-        mode          = mode,
-        sample_rate   = sample_rate,
-        baseline_n    = baseline_n,
-        mlflow_exp    = mlflow_exp,
-        alert_webhook = webhook,
-    )
-    set_drift_monitor(monitor)
+@app.delete('/train/{item_id}')
+async def delete_training(item_id: str, tenant_id: str):
+    with _store.connection() as db:
+        db.execute('DELETE FROM assets WHERE scope=? AND kind=? AND id=?',(identity(admin_context(tenant_id)),'training',item_id))
+    return {'status':'ok'}
 
-    return {
-        "status":      "ok",
-        "mode":        mode,
-        "sample_rate": sample_rate,
-        "baseline_n":  baseline_n,
-        "est_cost_per_query": round(sample_rate * 0.005, 5),
-        "message":     f"Drift monitor active — evaluating {sample_rate*100:.0f}% of queries",
-    }
+@app.get('/cache/stats')
+async def cache_stats(tenant_id: str):
+    context, _ = await versioned_context(tenant_id)
+    return {'scope':context.scope,'sql_entries':len(_store._list(context.scope,'sql')),'result_cache_enabled':False}
 
+@app.delete('/cache/results')
+async def cache_results(): return {'status':'disabled','purged_entries':0}
 
-@app.get("/drift/status")
-async def drift_status():
-    """
-    Current drift status — lightweight, call from monitoring dashboards.
-    Returns: drift_level (STABLE/WARN/DRIFT/CRITICAL), metrics, alerts.
-    """
-    monitor = get_drift_monitor()
-    if monitor is None:
-        return {"status": "not_configured", "message": "POST /drift/configure to start monitoring"}
-    return monitor.get_status()
+@app.delete('/cache/all')
+async def cache_all(tenant_id: str):
+    context, _ = await versioned_context(tenant_id)
+    return {'status':'ok','purged_entries':_store.admin_clear(context)}
 
+@app.post('/database/test')
+async def database_test(body: dict):
+    # Credentials and destinations come exclusively from configured server profiles.
+    context = admin_context(body.get('tenant_id'))
+    try: metadata = await _adapter(context).metadata(context)
+    except Exception: raise HTTPException(422,'Connection failed; consult internal service logs')
+    return {'status':'ok','table_count':len(metadata),'tables_preview':list(metadata)[:10]}
 
-@app.get("/drift/report")
-async def drift_report():
-    """
-    Full drift report with trends, recommendations, and alert history.
-    Use for periodic health summaries and dashboards.
-    """
-    monitor = get_drift_monitor()
-    if monitor is None:
-        return {"status": "not_configured"}
-    return monitor.get_report()
+@app.get('/database/status')
+async def database_status(tenant_id: str): return await database_test({'tenant_id':tenant_id})
 
+@app.post('/evaluate')
+async def evaluate():
+    return {'status':'offline_acceptance_required','message':'Use the versioned Snowflake holdout harness; live certification is pending.'}
 
-@app.post("/drift/reset-baseline")
-async def drift_reset_baseline():
-    """
-    Reset drift baseline — call after deploying a new agent version
-    or making significant changes to prompts or training data.
-    """
-    monitor = get_drift_monitor()
-    if monitor is None:
-        raise HTTPException(status_code=400, detail="Drift monitor not configured")
-    monitor.reset_baseline()
-    return {"status": "ok", "message": "Baseline reset — will re-establish from next queries"}
+@app.api_route('/drift/{action}',methods=['GET','POST'])
+async def drift(action: str):
+    return {'status':'not_configured','message':'Governed query stage metrics are recorded in MLflow. Live drift monitoring requires a staging baseline.'}
